@@ -160,6 +160,23 @@
     z-index:50; cursor:pointer; display:none;
   }
 
+  /* ---------- OPEN OVERLAY ---------- */
+  #openOverlay{
+    position:fixed; inset:0; z-index:200;
+    background:radial-gradient(circle at 50% 40%, rgba(108,60,233,0.45), transparent 60%), var(--bg);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; cursor:pointer; padding:20px;
+    transition:opacity .6s ease;
+  }
+  #openOverlay .heart{
+    font-size:44px; margin-bottom:18px; color:var(--pink);
+    animation:pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.15); } }
+  #openOverlay h2{ font-size:clamp(24px,5vw,34px); font-style:italic; margin:0 0 10px; }
+  #openOverlay p{ font-size:13px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; }
+  #openOverlay.hide{ opacity:0; pointer-events:none; }
+
   /* ---------- GALLERY / CAROUSEL ---------- */
   .carousel{ display:flex; flex-direction:column; align-items:center; }
   .main-frame{
@@ -245,6 +262,12 @@
 </style>
 </head>
 <body>
+<div id="openOverlay">
+  <div class="heart">♥</div>
+  <h2 contenteditable="true" onclick="event.stopPropagation()">um pouco de nós, pra você</h2>
+  <p>toque para abrir</p>
+</div>
+
 <div id="stars"></div>
 
 <audio id="bgAudio" src="musica.mp3" loop preload="auto"></audio>
@@ -429,37 +452,29 @@
     updateVolIcon();
   });
 
-  // navegadores bloqueiam áudio com som sem interação do usuário, mas permitem
-  // autoplay MUTADO. Então a música já começa a tocar (mutada) sozinha, e
-  // desmuta automaticamente assim que a pessoa faz qualquer coisa na página
-  // (scroll, toque, clique, tecla) — sem precisar clicar em nenhum botão de música.
-  let unlocked = false;
+  const openOverlay = document.getElementById('openOverlay');
 
-  function tryAutoplay(){
-    bgAudio.muted = true;
-    const playPromise = bgAudio.play();
-    if(playPromise !== undefined){ playPromise.catch(()=>{}); }
-  }
-  tryAutoplay();
-
-  function unlockAudioOnInteraction(){
-    if(unlocked) return;
-    unlocked = true;
+  function openSite(){
     bgAudio.muted = false;
     bgAudio.volume = DEFAULT_VOLUME;
     volumeSlider.value = DEFAULT_VOLUME;
     bgAudio.play().catch(()=>{});
-    autoplayHint.style.display = 'none';
     updateVolIcon();
+    openOverlay.classList.add('hide');
+    setTimeout(()=>{ openOverlay.remove(); }, 650);
   }
-  ['click','touchstart','keydown','scroll','mousemove','wheel'].forEach(evt=>{
-    document.addEventListener(evt, unlockAudioOnInteraction, { once:true, passive:true });
-  });
+  openOverlay.addEventListener('click', openSite);
 
-  // caso mesmo o autoplay mutado seja bloqueado, mostra o aviso depois de um instante
-  setTimeout(()=>{
-    if(bgAudio.paused && !unlocked) autoplayHint.style.display = 'block';
-  }, 1200);
+  // garante que a música nunca para sozinha (ex: se o navegador pausar por
+  // alguma interrupção, ela retoma o play automaticamente)
+  bgAudio.addEventListener('pause', ()=>{
+    if(!openOverlay.isConnected) return; // se ainda não abriu, ignora
+  });
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.visibilityState === 'visible' && !openOverlay.isConnected && bgAudio.paused){
+      bgAudio.play().catch(()=>{});
+    }
+  });
 
   /* -------- photo carousel -------- */
   let photos = [
