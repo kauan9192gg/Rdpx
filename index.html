@@ -429,31 +429,57 @@
     updateVolIcon();
   });
 
+  // navegadores bloqueiam áudio com som sem interação do usuário, mas permitem
+  // autoplay MUTADO. Então a música já começa a tocar (mutada) sozinha, e
+  // desmuta automaticamente assim que a pessoa faz qualquer coisa na página
+  // (scroll, toque, clique, tecla) — sem precisar clicar em nenhum botão de música.
+  let unlocked = false;
+
   function tryAutoplay(){
+    bgAudio.muted = true;
     const playPromise = bgAudio.play();
-    if(playPromise !== undefined){
-      playPromise.then(()=>{
-        autoplayHint.style.display = 'none';
-      }).catch(()=>{
-        // navegador bloqueou autoplay com som, pede um toque na tela
-        autoplayHint.style.display = 'block';
-      });
-    }
+    if(playPromise !== undefined){ playPromise.catch(()=>{}); }
   }
   tryAutoplay();
 
-  // se o autoplay for bloqueado, qualquer clique/toque na página liga a música
   function unlockAudioOnInteraction(){
-    bgAudio.play().then(()=>{
-      autoplayHint.style.display = 'none';
-    }).catch(()=>{});
+    if(unlocked) return;
+    unlocked = true;
+    bgAudio.muted = false;
+    bgAudio.volume = DEFAULT_VOLUME;
+    volumeSlider.value = DEFAULT_VOLUME;
+    bgAudio.play().catch(()=>{});
+    autoplayHint.style.display = 'none';
+    updateVolIcon();
   }
-  ['click','touchstart','keydown'].forEach(evt=>{
-    document.addEventListener(evt, unlockAudioOnInteraction, { once:true });
+  ['click','touchstart','keydown','scroll','mousemove','wheel'].forEach(evt=>{
+    document.addEventListener(evt, unlockAudioOnInteraction, { once:true, passive:true });
   });
 
+  // caso mesmo o autoplay mutado seja bloqueado, mostra o aviso depois de um instante
+  setTimeout(()=>{
+    if(bgAudio.paused && !unlocked) autoplayHint.style.display = 'block';
+  }, 1200);
+
   /* -------- photo carousel -------- */
-  let photos = [null, null, null, null];
+  let photos = [
+    'https://i.postimg.cc/hv7NVBR1/image.png',
+    'https://i.postimg.cc/wxyBwR6b/image.png',
+    'https://i.postimg.cc/BQnmW3zS/image.png',
+    'https://i.postimg.cc/GpGQPm4T/image.png',
+    'https://i.postimg.cc/0QC03Xd7/image.png',
+    'https://i.postimg.cc/T2CcJSPM/image.png',
+    'https://i.postimg.cc/xTZyWzHL/image.png',
+    'https://i.postimg.cc/L5XLW98j/image.png',
+    'https://i.postimg.cc/PJRYsgLG/image.png',
+    'https://i.postimg.cc/VLJXBkTS/image.png',
+    'https://i.postimg.cc/dVddpSJw/image.png',
+    'https://i.postimg.cc/xT83xRkr/image.png',
+    'https://i.postimg.cc/RhDK5k36/image.png',
+    'https://i.postimg.cc/L8ffw0mn/image.png',
+    'https://i.postimg.cc/CKgDgHKk/image.png',
+    'https://i.postimg.cc/j5q7WxPd/image.png'
+  ];
   let current = 0;
   const mainImg = document.getElementById('mainImg');
   const mainPlaceholder = document.getElementById('mainPlaceholder');
