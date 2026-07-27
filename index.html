@@ -9,7 +9,6 @@
 <style>
   :root{
     --bg:#0B0618;
-    --bg2:#170B2E;
     --purple:#6C3CE9;
     --purple-light:#9B6BFF;
     --pink:#FF4FA3;
@@ -20,178 +19,155 @@
     --text-dim:rgba(241,233,255,0.62);
   }
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{
-    margin:0;
-    background:var(--bg);
-    color:var(--text);
-    font-family:'Inter',sans-serif;
-    overflow-x:hidden;
-    position:relative;
-  }
+  html,body{ height:100%; margin:0; overflow:hidden; overscroll-behavior:none; }
+  body{ background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; position:relative; }
   h1,h2,h3,.serif{ font-family:'Playfair Display',serif; }
 
   [contenteditable="true"]{
-    outline:none;
-    border-bottom:1px dashed transparent;
-    transition:border-color .2s, background .2s;
-    cursor:text;
-    border-radius:3px;
+    outline:none; border-bottom:1px dashed transparent;
+    transition:border-color .2s, background .2s; cursor:text; border-radius:3px;
   }
   [contenteditable="true"]:hover{ border-color:var(--purple-light); background:rgba(155,107,255,0.08); }
   [contenteditable="true"]:focus{ border-color:var(--pink); background:rgba(255,79,163,0.08); }
 
-  /* starfield */
-  #stars{
-    position:fixed; inset:0; z-index:0; pointer-events:none;
-  }
-  .star{
-    position:absolute;
-    background:#fff;
-    border-radius:50%;
-    animation:twinkle 3.5s ease-in-out infinite;
-  }
+  #stars{ position:fixed; inset:0; z-index:0; pointer-events:none; }
+  .star{ position:absolute; background:#fff; border-radius:50%; animation:twinkle 3.5s ease-in-out infinite; }
   @keyframes twinkle{ 0%,100%{opacity:.15;} 50%{opacity:1;} }
 
-  section, header{ position:relative; z-index:1; }
+  /* ---------- SCREENS ---------- */
+  #screens{ position:fixed; inset:0; z-index:1; }
+  .screen{
+    position:absolute; inset:0; width:100%; height:100%;
+    overflow-y:auto; -webkit-overflow-scrolling:touch;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:80px 20px 60px;
+    opacity:0; transform:translateY(3%);
+    transition:opacity .55s ease, transform .55s ease;
+    pointer-events:none; z-index:1;
+  }
+  .screen.active{ opacity:1; transform:translateY(0); pointer-events:all; z-index:2; }
+  .screen-inner{ width:100%; max-width:1000px; margin:0 auto; text-align:center; }
 
-  /* ---------- HEADER / COUNTER ---------- */
-  header{
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    padding:60px 20px;
+  .screen[data-screen="0"]{
     background:radial-gradient(circle at 50% 20%, rgba(108,60,233,0.35), transparent 55%), var(--bg);
   }
-  .top-label{
-    font-size:12px; letter-spacing:3px; text-transform:uppercase;
-    color:var(--purple-light); opacity:.85; margin-bottom:26px;
-  }
-  header h1{
-    font-size:clamp(28px,5vw,44px);
-    font-style:italic; font-weight:600;
-    margin:0 0 8px;
+
+  .top-label{ font-size:12px; letter-spacing:3px; text-transform:uppercase; color:var(--purple-light); opacity:.85; margin-bottom:26px; }
+  .screen[data-screen="0"] h1{
+    font-size:clamp(28px,5vw,44px); font-style:italic; font-weight:600; margin:0 0 8px;
     background:linear-gradient(90deg,var(--purple-light),var(--pink));
     -webkit-background-clip:text; background-clip:text; color:transparent;
   }
   .since-line{
-    font-size:14px; color:var(--text-dim); margin-bottom:40px; letter-spacing:.5px;
+    font-size:14px; color:var(--text-dim); margin-bottom:34px; letter-spacing:.5px;
     display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:center;
   }
   .since-line input[type=date]{
     background:var(--card); border:1px solid var(--card-border); color:var(--text);
     border-radius:8px; padding:5px 10px; font-family:'Inter',sans-serif; font-size:13px;
   }
-  .counter-boxes{ display:flex; gap:18px; flex-wrap:wrap; justify-content:center; margin-bottom:26px; }
+  .counter-boxes{ display:flex; gap:18px; flex-wrap:wrap; justify-content:center; margin-bottom:22px; }
   .cbox{
-    background:linear-gradient(160deg,var(--purple),#3E1F8F);
-    border-radius:16px; padding:22px 26px; min-width:96px;
-    box-shadow:0 10px 30px rgba(108,60,233,0.35);
+    background:linear-gradient(160deg,var(--purple),#3E1F8F); border-radius:16px;
+    padding:22px 26px; min-width:96px; box-shadow:0 10px 30px rgba(108,60,233,0.35);
   }
   .cbox .num{ font-size:38px; font-weight:700; font-family:'Playfair Display',serif; }
   .cbox .label{ font-size:11px; letter-spacing:2px; text-transform:uppercase; opacity:.8; margin-top:4px; }
   .live-clock{
-    background:var(--card); border:1px solid var(--card-border);
-    border-radius:30px; padding:10px 22px; font-size:20px; letter-spacing:2px;
-    margin-bottom:22px; font-variant-numeric:tabular-nums;
+    background:var(--card); border:1px solid var(--card-border); border-radius:30px;
+    padding:10px 22px; font-size:20px; letter-spacing:2px; margin-bottom:18px; font-variant-numeric:tabular-nums;
   }
-  .days-of-love{
-    font-size:14px; color:var(--purple-light); letter-spacing:.5px;
-  }
-  .scroll-hint{
-    margin-top:56px; font-size:13px; color:var(--text-dim); letter-spacing:1px;
-    animation:bob 2.4s ease-in-out infinite;
-  }
-  @keyframes bob{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(8px);} }
+  .days-of-love{ font-size:14px; color:var(--purple-light); letter-spacing:.5px; margin-bottom:34px; }
 
-  section{ padding:110px 20px; max-width:1000px; margin:0 auto; }
-  .section-title{
-    text-align:center; margin-bottom:8px;
-    font-size:clamp(28px,4.5vw,42px); font-style:italic;
-  }
-  .section-sub{
-    text-align:center; color:var(--text-dim); font-size:13px;
-    margin-bottom:56px; letter-spacing:.5px;
-  }
+  .section-title{ text-align:center; margin-bottom:8px; font-size:clamp(26px,4.5vw,40px); font-style:italic; }
+  .section-sub{ text-align:center; color:var(--text-dim); font-size:13px; margin-bottom:36px; letter-spacing:.5px; }
 
-  /* ---------- MUSIC ---------- */
-  .music-wrap{ display:flex; justify-content:center; }
+  .hint-text{ font-size:12.5px; color:var(--text-dim); letter-spacing:.5px; margin-top:14px; }
+
+  /* ---------- GENERIC RIPPLE ---------- */
+  .ripple{
+    position:absolute; border-radius:50%; border:2px solid var(--pink);
+    pointer-events:none; transform:translate(-50%,-50%); opacity:.8;
+    animation:rippleOut .7s ease-out forwards;
+  }
+  @keyframes rippleOut{ to{ width:120px; height:120px; opacity:0; } }
+
+  /* ---------- SCREEN 0: BEAT HEART ---------- */
+  .beat-heart-wrap{ margin-top:6px; }
+  .beat-heart{
+    font-size:44px; color:var(--pink); cursor:pointer; user-select:none;
+    display:inline-block; position:relative; transition:transform .15s ease;
+    filter:drop-shadow(0 0 10px rgba(255,79,163,0.4));
+  }
+  .beat-heart.beat-anim{ animation:beatPulse .4s ease; }
+  @keyframes beatPulse{ 0%{transform:scale(1);} 30%{transform:scale(1.35);} 55%{transform:scale(.92);} 100%{transform:scale(1);} }
+  .beat-dots{ display:flex; gap:10px; justify-content:center; margin-top:14px; }
+  .beat-dot{
+    width:9px; height:9px; border-radius:50%; border:1.5px solid var(--purple-light);
+    background:transparent; transition:background .25s, transform .25s;
+  }
+  .beat-dot.filled{ background:var(--pink); border-color:var(--pink); transform:scale(1.2); }
+
+  /* ---------- SCREEN 1: VINYL HOLD ---------- */
+  .vinyl-wrap{ display:flex; flex-direction:column; align-items:center; margin-top:4px; }
+  .vinyl-progress{
+    width:128px; height:128px; border-radius:50%; padding:8px;
+    background:conic-gradient(var(--pink) calc(var(--p, 0) * 3.6deg), rgba(255,255,255,0.12) 0);
+    transition:background .05s linear; cursor:pointer; touch-action:none; user-select:none;
+  }
+  .vinyl-disc{
+    width:100%; height:100%; border-radius:50%; position:relative;
+    background:repeating-radial-gradient(circle at center, #14101c 0 5px, #201a2c 5px 10px);
+    box-shadow:inset 0 0 22px rgba(0,0,0,0.6);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .vinyl-disc::after{ content:''; width:26px; height:26px; border-radius:50%; background:var(--pink); box-shadow:0 0 12px rgba(255,79,163,.6); }
+  .vinyl-disc.spinning{ animation:vinylSpin 1s linear infinite; }
+  @keyframes vinylSpin{ to{ transform:rotate(360deg); } }
+
   .music-card{
-    width:100%; max-width:420px;
-    background:var(--card); border:1px solid var(--card-border);
-    border-radius:20px; padding:28px; text-align:center;
-    backdrop-filter:blur(6px);
+    width:100%; max-width:380px; background:var(--card); border:1px solid var(--card-border);
+    border-radius:20px; padding:26px; text-align:center; backdrop-filter:blur(6px); margin-bottom:26px;
   }
-  .music-card .note-icon{ font-size:26px; color:var(--pink); margin-bottom:10px; }
-  .music-card h3{ margin:0 0 4px; font-size:22px; }
-  .music-card .sub{ font-size:12px; color:var(--text-dim); margin-bottom:20px; }
-  .now-playing-bars{
-    display:flex; align-items:flex-end; justify-content:center; gap:4px; height:26px; margin-top:6px;
-  }
-  .now-playing-bars span{
-    width:4px; border-radius:2px;
-    background:linear-gradient(180deg,var(--pink),var(--purple-light));
-    animation:eq 1.1s ease-in-out infinite;
-  }
-  .now-playing-bars span:nth-child(1){ animation-delay:0s; height:10px; }
-  .now-playing-bars span:nth-child(2){ animation-delay:.2s; height:22px; }
-  .now-playing-bars span:nth-child(3){ animation-delay:.35s; height:14px; }
-  .now-playing-bars span:nth-child(4){ animation-delay:.15s; height:20px; }
+  .music-card h3{ margin:6px 0 4px; font-size:20px; }
+  .music-card .sub{ font-size:12px; color:var(--text-dim); margin-bottom:16px; }
+  .now-playing-bars{ display:flex; align-items:flex-end; justify-content:center; gap:4px; height:22px; }
+  .now-playing-bars span{ width:4px; border-radius:2px; background:linear-gradient(180deg,var(--pink),var(--purple-light)); animation:eq 1.1s ease-in-out infinite; }
+  .now-playing-bars span:nth-child(1){ animation-delay:0s; height:9px; }
+  .now-playing-bars span:nth-child(2){ animation-delay:.2s; height:19px; }
+  .now-playing-bars span:nth-child(3){ animation-delay:.35s; height:12px; }
+  .now-playing-bars span:nth-child(4){ animation-delay:.15s; height:17px; }
   @keyframes eq{ 0%,100%{ transform:scaleY(.4); } 50%{ transform:scaleY(1); } }
 
-  /* ---------- VOLUME CONTROL ---------- */
+  /* ---------- VOLUME / OVERLAY ---------- */
   .volume-control{
-    position:fixed; top:16px; left:16px; z-index:50;
-    display:flex; align-items:center; gap:8px;
-    background:rgba(11,6,24,0.55); border:1px solid var(--card-border);
-    padding:8px 14px; border-radius:30px; backdrop-filter:blur(8px);
+    position:fixed; top:16px; left:16px; z-index:50; display:flex; align-items:center; gap:8px;
+    background:rgba(11,6,24,0.55); border:1px solid var(--card-border); padding:8px 14px; border-radius:30px; backdrop-filter:blur(8px);
   }
   .volume-control .icon{ font-size:15px; cursor:pointer; user-select:none; }
-  .volume-control input[type=range]{
-    width:80px; accent-color:var(--pink); cursor:pointer;
-  }
-  .autoplay-hint{
-    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
-    background:rgba(11,6,24,0.75); border:1px solid var(--card-border);
-    padding:10px 18px; border-radius:30px; font-size:12px; color:var(--text-dim);
-    z-index:50; cursor:pointer; display:none;
-  }
+  .volume-control input[type=range]{ width:80px; accent-color:var(--pink); cursor:pointer; }
 
-  /* ---------- OPEN OVERLAY ---------- */
   #openOverlay{
     position:fixed; inset:0; z-index:200;
     background:radial-gradient(circle at 50% 40%, rgba(108,60,233,0.45), transparent 60%), var(--bg);
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    text-align:center; padding:20px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;
     transition:opacity .6s ease;
   }
   #openOverlay h2{ font-size:clamp(24px,5vw,34px); font-style:italic; margin:0 0 26px; }
   #openOverlay p{ font-size:13px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; margin-top:22px; }
   #openOverlay.hide{ opacity:0; pointer-events:none; }
 
-  .hold-heart{
-    width:110px; height:110px;
-    cursor:pointer;
-    -webkit-tap-highlight-color:transparent;
-    touch-action:none;
-    user-select:none;
-    transition:transform .15s ease;
-  }
+  .hold-heart{ width:110px; height:110px; cursor:pointer; -webkit-tap-highlight-color:transparent; touch-action:none; user-select:none; transition:transform .15s ease; }
   .hold-heart.pressing{ transform:scale(1.08); }
   .hold-heart svg{ width:100%; height:100%; overflow:visible; filter:drop-shadow(0 0 14px rgba(255,79,163,0.45)); }
   #heartOutline{ fill:none; stroke:var(--purple-light); stroke-width:1.4; }
   #heartFill{ fill:var(--pink); }
 
-  /* ---------- GALLERY / CAROUSEL ---------- */
+  /* ---------- GALLERY ---------- */
   .carousel{ display:flex; flex-direction:column; align-items:center; }
   .main-frame{
-    width:100%; max-width:420px; aspect-ratio:4/5;
-    background:var(--card); border:1px solid var(--card-border);
-    border-radius:18px; overflow:hidden; position:relative;
-    display:flex; align-items:center; justify-content:center;
+    width:100%; max-width:380px; aspect-ratio:4/5; background:var(--card); border:1px solid var(--card-border);
+    border-radius:18px; overflow:hidden; position:relative; display:flex; align-items:center; justify-content:center;
   }
   .main-frame img{ width:100%; height:100%; object-fit:cover; display:none; }
   .main-frame .placeholder{ text-align:center; color:var(--text-dim); font-size:13px; padding:20px; }
@@ -200,108 +176,146 @@
     position:absolute; top:50%; transform:translateY(-50%);
     background:rgba(11,6,24,0.55); border:1px solid var(--card-border); color:#fff;
     width:38px; height:38px; border-radius:50%; cursor:pointer; font-size:18px;
-    display:flex; align-items:center; justify-content:center;
-    z-index:3;
+    display:flex; align-items:center; justify-content:center; z-index:3;
   }
   .arrow-btn:active{ background:rgba(11,6,24,0.8); }
-  #prevBtn{ left:10px; }
-  #nextBtn{ right:10px; }
-  .thumbs{ display:flex; gap:10px; margin-top:20px; flex-wrap:wrap; justify-content:center; }
+  #prevPhotoBtn{ left:10px; }
+  #nextPhotoBtn{ right:10px; }
+  .thumbs{ display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; justify-content:center; max-width:380px; }
   .thumb{
-    width:56px; height:56px; border-radius:8px; overflow:hidden; cursor:pointer;
+    width:52px; height:52px; border-radius:8px; overflow:hidden; cursor:pointer;
     border:2px solid transparent; background:var(--card); position:relative;
     display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-size:20px;
   }
   .thumb.active{ border-color:var(--pink); }
   .thumb img{ width:100%; height:100%; object-fit:cover; display:none; }
-  .thumb input[type=file]{ display:none; }
 
-  /* ---------- LETTER ---------- */
-  .letter-wrap{ display:flex; justify-content:center; }
-  .letter{
-    background:var(--paper); color:#2B1B3D;
-    max-width:600px; width:100%; padding:44px 40px;
-    border-radius:20px; box-shadow:0 25px 60px rgba(108,60,233,0.25);
+  .gallery-progress{ margin-top:18px; font-size:12px; color:var(--text-dim); letter-spacing:.5px; }
+  .gallery-progress .dots{ display:flex; gap:6px; justify-content:center; margin-top:8px; }
+  .gallery-progress .gdot{ width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.18); transition:background .25s; }
+  .gallery-progress .gdot.on{ background:var(--pink); }
+
+  .reveal-btn{
+    margin-top:22px; background:linear-gradient(135deg,var(--purple),var(--pink)); color:#fff; border:none;
+    border-radius:30px; padding:12px 26px; font-size:13px; letter-spacing:.5px; font-family:'Inter',sans-serif;
+    font-weight:500; cursor:pointer; box-shadow:0 10px 26px rgba(108,60,233,0.4);
+    opacity:0; transform:translateY(8px) scale(.9); pointer-events:none;
+    transition:opacity .4s ease, transform .4s ease;
   }
-  .letter .quote-mark{ font-size:38px; color:var(--purple); opacity:.5; line-height:0; }
-  .letter-body{ font-size:18px; line-height:1.85; font-style:italic; font-family:'Playfair Display',serif; margin-top:8px; }
-  .letter .sign-off{ margin-top:26px; text-align:right; font-size:15px; opacity:.7; font-family:'Inter',sans-serif; }
+  .reveal-btn.show{ opacity:1; transform:translateY(0) scale(1); pointer-events:all; animation:popIn .5s ease; }
+  @keyframes popIn{ 0%{ transform:scale(.7); } 60%{ transform:scale(1.08); } 100%{ transform:scale(1); } }
 
-  /* ---------- TIMELINE ---------- */
-  .timeline{ position:relative; padding-top:10px; }
+  /* ---------- LETTER + WAX SEAL ---------- */
+  .letter-wrap{ display:flex; flex-direction:column; align-items:center; }
+  .letter{
+    background:var(--paper); color:#2B1B3D; max-width:560px; width:100%; padding:40px 36px 30px;
+    border-radius:20px 20px 4px 4px; box-shadow:0 25px 60px rgba(108,60,233,0.25); position:relative;
+  }
+  .letter .quote-mark{ font-size:36px; color:var(--purple); opacity:.5; line-height:0; }
+  .letter-body{ font-size:17px; line-height:1.8; font-style:italic; font-family:'Playfair Display',serif; margin-top:8px; }
+  .letter .sign-off{ margin-top:22px; text-align:right; font-size:14px; opacity:.7; font-family:'Inter',sans-serif; }
+
+  .seal-area{
+    width:100%; max-width:560px; background:rgba(255,255,255,0.03); border:1px solid var(--card-border);
+    border-top:none; border-radius:0 0 16px 16px; padding:16px 20px 22px; display:flex; flex-direction:column; align-items:center;
+  }
+  .seal-track{ position:relative; width:64px; height:96px; margin-top:6px; }
+  .seal-line{ position:absolute; left:50%; top:0; bottom:0; width:2px; background:rgba(255,255,255,0.15); transform:translateX(-50%); border-radius:2px; }
+  .seal-target-label{ position:absolute; bottom:-4px; left:50%; transform:translateX(-50%); font-size:10px; color:var(--text-dim); white-space:nowrap; }
+  .wax-seal{
+    width:52px; height:52px; border-radius:50%;
+    background:radial-gradient(circle at 32% 28%, #ff86c2, var(--pink) 55%, #a91f65 100%);
+    display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px;
+    position:absolute; left:50%; top:0; transform:translate(-50%,0);
+    cursor:grab; box-shadow:0 6px 16px rgba(255,79,163,0.45); touch-action:none; z-index:2;
+    transition:box-shadow .2s;
+  }
+  .wax-seal.dragging{ cursor:grabbing; }
+  .wax-seal.sealed{ cursor:default; animation:sealStamp .35s ease; box-shadow:0 2px 8px rgba(0,0,0,0.3); }
+  @keyframes sealStamp{ 0%{ transform:translate(-50%,0) scale(1.15); } 60%{ transform:translate(-50%,44px) scale(.9); } 100%{ transform:translate(-50%,44px) scale(1); } }
+
+  /* ---------- TIMELINE + PULL TAB ---------- */
+  .timeline{ position:relative; padding-top:6px; width:100%; }
   .timeline::before{
     content:""; position:absolute; left:50%; top:0; bottom:0; width:2px;
-    background:linear-gradient(var(--purple),var(--pink));
-    transform:translateX(-50%);
+    background:linear-gradient(var(--purple),var(--pink)); transform:translateX(-50%);
   }
-  .tl-item{
-    display:flex; align-items:center; margin-bottom:60px; position:relative;
-  }
+  .tl-item{ display:flex; align-items:center; margin-bottom:56px; position:relative; opacity:1; transform:none; transition:opacity .6s ease, transform .6s ease; }
+  .tl-item.tl-hidden{ opacity:0; transform:translateY(24px); }
   .tl-item.right{ flex-direction:row-reverse; }
   .tl-card{
-    width:calc(50% - 44px);
-    background:var(--card); border:1px solid var(--card-border);
-    border-radius:16px; padding:20px 22px; backdrop-filter:blur(6px);
+    width:calc(50% - 44px); background:var(--card); border:1px solid var(--card-border);
+    border-radius:16px; padding:18px 20px; backdrop-filter:blur(6px);
   }
   .tl-date{ font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--pink); margin-bottom:6px; }
-  .tl-title{ font-size:19px; font-family:'Playfair Display',serif; margin-bottom:6px; }
+  .tl-title{ font-size:18px; font-family:'Playfair Display',serif; margin-bottom:6px; }
   .tl-desc{ font-size:13px; color:var(--text-dim); line-height:1.6; }
   .tl-dot{
-    width:16px; height:16px; border-radius:50%;
-    background:var(--bg); border:2px solid var(--pink);
-    box-shadow:0 0 0 4px var(--bg), 0 0 14px var(--pink);
-    flex-shrink:0; z-index:2;
+    width:16px; height:16px; border-radius:50%; background:var(--bg); border:2px solid var(--pink);
+    box-shadow:0 0 0 4px var(--bg), 0 0 14px var(--pink); flex-shrink:0; z-index:2;
   }
   .add-event{
-    display:block; margin:0 auto; background:transparent;
-    border:1px dashed var(--card-border); color:var(--text-dim);
+    display:block; margin:6px auto 0; background:transparent; border:1px dashed var(--card-border); color:var(--text-dim);
     padding:10px 20px; border-radius:30px; cursor:pointer; font-size:13px;
   }
   .add-event:hover{ border-color:var(--pink); color:var(--pink); }
 
-  footer{ text-align:center; padding:60px 20px 90px; color:var(--text-dim); font-size:12px; }
+  .pull-wrap{ display:flex; flex-direction:column; align-items:center; margin-bottom:30px; }
+  .pull-track{
+    position:relative; height:52px; width:230px; border-radius:30px;
+    background:rgba(255,255,255,0.05); border:1px solid var(--card-border); overflow:hidden;
+  }
+  .pull-fill{ position:absolute; inset:0; width:0%; background:linear-gradient(90deg,var(--purple),var(--pink)); opacity:.35; }
+  .pull-label{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--text-dim); pointer-events:none; letter-spacing:.3px; }
+  .pull-handle{
+    position:absolute; top:3px; left:3px; width:44px; height:44px; border-radius:50%;
+    background:linear-gradient(160deg,var(--purple),#3E1F8F); display:flex; align-items:center; justify-content:center;
+    font-size:18px; cursor:grab; touch-action:none; box-shadow:0 6px 16px rgba(108,60,233,0.4); z-index:2;
+  }
+  .pull-handle.dragging{ cursor:grabbing; }
+
+  .final-heart{ font-size:40px; margin-bottom:16px; color:var(--pink); }
+  footer{ text-align:center; }
+  footer .footer-text{ font-size:14px; margin-bottom:24px; }
+  .relive-hold{
+    width:70px; height:70px; margin:0 auto; cursor:pointer; touch-action:none; user-select:none; transition:transform .15s ease;
+  }
+  .relive-hold.pressing{ transform:scale(1.08); }
+  .relive-hold svg{ width:100%; height:100%; }
+
+  /* ---------- SCREEN NAVIGATION ---------- */
+  #screenNav{ position:fixed; z-index:100; right:16px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:12px; }
+  .nav-dot{ width:9px; height:9px; border-radius:50%; background:rgba(241,233,255,0.25); border:1px solid var(--card-border); cursor:pointer; transition:background .25s, transform .25s, opacity .25s; }
+  .nav-dot.active{ background:var(--pink); transform:scale(1.35); }
+  .nav-dot.locked{ opacity:.35; cursor:not-allowed; }
+
+  #prevScreenBtn{
+    position:fixed; left:16px; bottom:24px; z-index:100;
+    background:rgba(11,6,24,0.55); border:1px solid var(--card-border); color:#fff;
+    width:42px; height:42px; border-radius:50%; cursor:pointer; font-size:17px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  #prevScreenBtn.hidden{ display:none; }
 
   @media(max-width:640px){
-    header{ padding:50px 16px; min-height:100svh; }
-    .top-label{ margin-bottom:18px; }
-    .since-line{ margin-bottom:30px; font-size:13px; }
-    .counter-boxes{ gap:12px; margin-bottom:20px; }
-    .cbox{ padding:16px 18px; min-width:80px; }
-    .cbox .num{ font-size:30px; }
-    .live-clock{ font-size:16px; letter-spacing:1px; padding:8px 16px; }
-    .scroll-hint{ margin-top:40px; }
-
-    section{ padding:70px 16px; }
-    .section-title{ font-size:26px; }
-    .section-sub{ margin-bottom:40px; }
-
-    .music-card{ padding:22px 18px; }
-
+    .screen{ padding:64px 16px 40px; }
+    .cbox{ padding:16px 18px; min-width:78px; }
+    .cbox .num{ font-size:28px; }
+    .live-clock{ font-size:15px; letter-spacing:1px; padding:8px 16px; }
+    .section-title{ font-size:24px; }
     .volume-control{ top:12px; left:12px; padding:6px 10px; }
     .volume-control input[type=range]{ width:60px; }
-
     .main-frame{ max-width:100%; aspect-ratio:1/1; }
-    .arrow-btn{ width:34px; height:34px; font-size:16px; }
-    .thumb{ width:48px; height:48px; }
-
-    .letter{ padding:30px 22px; }
-    .letter-body{ font-size:16px; }
-    .letter .quote-mark{ font-size:32px; }
-
-    .hold-heart{ width:88px; height:88px; }
-    #openOverlay h2{ margin-bottom:20px; }
-
+    .letter{ padding:28px 22px 24px; }
+    .letter-body{ font-size:15.5px; }
+    .hold-heart{ width:86px; height:86px; }
     .tl-card{ width:calc(100% - 50px); }
     .tl-item, .tl-item.right{ flex-direction:row; }
     .timeline::before{ left:16px; }
     .tl-dot{ margin-right:16px; }
-  }
-
-  @media(max-width:360px){
-    .counter-boxes{ gap:8px; }
-    .cbox{ padding:12px 14px; min-width:70px; }
-    .cbox .num{ font-size:26px; }
-    .live-clock{ font-size:14px; padding:7px 12px; }
+    .pull-track{ width:200px; }
+    #screenNav{ right:8px; gap:9px; }
+    #prevScreenBtn{ bottom:16px; left:10px; width:38px; height:38px; }
   }
 </style>
 </head>
@@ -311,9 +325,7 @@
   <div class="hold-heart" id="holdHeart">
     <svg viewBox="0 0 32 29.6">
       <defs>
-        <clipPath id="fillClip">
-          <rect id="fillRect" x="0" y="29.6" width="32" height="0"/>
-        </clipPath>
+        <clipPath id="fillClip"><rect id="fillRect" x="0" y="29.6" width="32" height="0"/></clipPath>
       </defs>
       <path id="heartOutline" d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,14.2,16,21.6 c6.5-7.4,16-12.2,16-21.6C32,3.8,28.2,0,23.6,0z"/>
       <path id="heartFill" d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,14.2,16,21.6 c6.5-7.4,16-12.2,16-21.6C32,3.8,28.2,0,23.6,0z" clip-path="url(#fillClip)"/>
@@ -329,101 +341,162 @@
   <span class="icon" id="volIcon">🔉</span>
   <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.2">
 </div>
-<div class="autoplay-hint" id="autoplayHint">toque aqui pra ligar a música ♪</div>
 
-<!-- HEADER / COUNTER -->
-<header>
-  <div class="top-label">com amor, pra você</div>
-  <h1 contenteditable="true">Feliz por estar com você</h1>
-  <div class="since-line">
-    juntos desde
-    <input type="date" id="startDate" value="2025-05-29">
-  </div>
-  <div class="counter-boxes">
-    <div class="cbox"><div class="num" id="numMonths">0</div><div class="label">meses</div></div>
-    <div class="cbox"><div class="num" id="numDays">0</div><div class="label">dias</div></div>
-  </div>
-  <div class="live-clock" id="liveClock">00:00:00</div>
-  <div class="days-of-love">✦ <span id="totalDays">0</span> dias de amor ✦</div>
-  <div class="scroll-hint">role para baixo ↓</div>
-</header>
+<div id="screenNav"></div>
+<button id="prevScreenBtn" aria-label="tela anterior">‹</button>
 
-<!-- MUSIC -->
-<section>
-  <h2 class="section-title">Nossa Música</h2>
-  <p class="section-sub">a trilha sonora do nosso amor</p>
-  <div class="music-wrap">
-    <div class="music-card">
-      <div class="note-icon">♫</div>
-      <h3 contenteditable="true">Toca essa aqui</h3>
-      <div class="sub">é a nossa música</div>
-      <div class="now-playing-bars">
-        <span></span><span></span><span></span><span></span>
+<div id="screens">
+
+  <!-- TELA 0 -->
+  <section class="screen" data-screen="0">
+    <div class="screen-inner">
+      <div class="top-label">com amor, pra você</div>
+      <h1 contenteditable="true">Feliz por estar com você</h1>
+      <div class="since-line">
+        juntos desde
+        <input type="date" id="startDate" value="2025-05-29">
+      </div>
+      <div class="counter-boxes">
+        <div class="cbox"><div class="num" id="numMonths">0</div><div class="label">meses</div></div>
+        <div class="cbox"><div class="num" id="numDays">0</div><div class="label">dias</div></div>
+      </div>
+      <div class="live-clock" id="liveClock">00:00:00</div>
+      <div class="days-of-love">✦ <span id="totalDays">0</span> dias de amor ✦</div>
+
+      <div class="beat-heart-wrap">
+        <div class="beat-heart" id="beatHeart">♥</div>
+        <div class="beat-dots">
+          <span class="beat-dot" data-i="0"></span>
+          <span class="beat-dot" data-i="1"></span>
+          <span class="beat-dot" data-i="2"></span>
+        </div>
+        <p class="hint-text" id="beatHint">toque no coração 3 vezes pra sentir nossas batidas</p>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- GALLERY -->
-<section>
-  <h2 class="section-title">Várias Fotinhas Nossas</h2>
-  <p class="section-sub">clique na foto grande pra adicionar, e use as setas pra navegar</p>
-  <div class="carousel">
-    <div class="main-frame" id="mainFrame">
-      <div class="placeholder" id="mainPlaceholder">
-        <span class="plus">+</span>
-        clique para adicionar uma foto
+  <!-- TELA 1 -->
+  <section class="screen" data-screen="1">
+    <div class="screen-inner">
+      <h2 class="section-title">Nossa Música</h2>
+      <p class="section-sub">a trilha sonora do nosso amor</p>
+      <div class="music-card">
+        <h3 contenteditable="true">Toca essa aqui</h3>
+        <div class="sub">é a nossa música</div>
+        <div class="now-playing-bars"><span></span><span></span><span></span><span></span></div>
       </div>
-      <img id="mainImg" src="" alt="">
-      <input type="file" accept="image/*" id="mainFileInput" style="display:none;">
-      <button class="arrow-btn" id="prevBtn">‹</button>
-      <button class="arrow-btn" id="nextBtn">›</button>
-    </div>
-    <div class="thumbs" id="thumbs"></div>
-  </div>
-</section>
-
-<!-- LETTER -->
-<section>
-  <h2 class="section-title">Uma Carta Pra Você</h2>
-  <p class="section-sub">clique no texto pra escrever a sua versão</p>
-  <div class="letter-wrap">
-    <div class="letter">
-      <div class="quote-mark">"</div>
-      <div class="letter-body" contenteditable="true">Desde o primeiro dia em que te vi, soube que minha vida jamais seria a mesma. Cada momento ao seu lado é uma bênção, cada sorriso seu ilumina meu mundo. Você é meu porto seguro, minha paz e minha maior aventura. Te amo mais do que as palavras podem expressar.</div>
-      <div class="sign-off" contenteditable="true">— com todo o meu amor</div>
-    </div>
-  </div>
-</section>
-
-<!-- TIMELINE -->
-<section>
-  <h2 class="section-title">Nossa História</h2>
-  <p class="section-sub">momentos que marcaram nossa jornada</p>
-  <div class="timeline" id="timeline">
-    <div class="tl-item">
-      <div class="tl-card">
-        <div class="tl-date" contenteditable="true">31 de janeiro de 2025</div>
-        <div class="tl-title" contenteditable="true">Primeira viagem</div>
-        <div class="tl-desc" contenteditable="true">Nossa viagem inesquecível, por muitas que virão!</div>
+      <div class="vinyl-wrap">
+        <div class="vinyl-progress" id="vinylHold" style="--p:0">
+          <div class="vinyl-disc" id="vinylDisc"></div>
+        </div>
+        <p class="hint-text" id="vinylHint">segure o disco até a música pegar embalo</p>
       </div>
-      <div class="tl-dot"></div>
-      <div style="width:calc(50% - 44px);"></div>
     </div>
-    <div class="tl-item right">
-      <div class="tl-card">
-        <div class="tl-date" contenteditable="true">31 de agosto de 2025</div>
-        <div class="tl-title" contenteditable="true">Uma data especial</div>
-        <div class="tl-desc" contenteditable="true">Um dia muito importante pra nós dois.</div>
-      </div>
-      <div class="tl-dot"></div>
-      <div style="width:calc(50% - 44px);"></div>
-    </div>
-  </div>
-  <button class="add-event" id="addEvent">+ adicionar outro momento</button>
-</section>
+  </section>
 
-<footer contenteditable="true">feito com amor, especialmente pra você.</footer>
+  <!-- TELA 2 -->
+  <section class="screen" data-screen="2">
+    <div class="screen-inner">
+      <h2 class="section-title">Várias Fotinhas Nossas</h2>
+      <p class="section-sub">clique na foto grande pra adicionar, e use as setas pra navegar</p>
+      <div class="carousel">
+        <div class="main-frame" id="mainFrame">
+          <div class="placeholder" id="mainPlaceholder"><span class="plus">+</span>clique para adicionar uma foto</div>
+          <img id="mainImg" src="" alt="">
+          <input type="file" accept="image/*" id="mainFileInput" style="display:none;">
+          <button class="arrow-btn" id="prevPhotoBtn">‹</button>
+          <button class="arrow-btn" id="nextPhotoBtn">›</button>
+        </div>
+        <div class="thumbs" id="thumbs"></div>
+        <div class="gallery-progress">
+          <span id="galleryProgressText">passeie por 3 fotos pra continuar</span>
+          <div class="dots" id="galleryDots"></div>
+        </div>
+        <button class="reveal-btn" id="galleryContinueBtn">continuar ♥</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TELA 3 -->
+  <section class="screen" data-screen="3">
+    <div class="screen-inner">
+      <h2 class="section-title">Uma Carta Pra Você</h2>
+      <p class="section-sub">clique no texto pra escrever a sua versão</p>
+      <div class="letter-wrap">
+        <div class="letter">
+          <div class="quote-mark">"</div>
+          <div class="letter-body" contenteditable="true">Desde o primeiro dia em que te vi, soube que minha vida jamais seria a mesma. Cada momento ao seu lado é uma bênção, cada sorriso seu ilumina meu mundo. Você é meu porto seguro, minha paz e minha maior aventura. Te amo mais do que as palavras podem expressar.</div>
+          <div class="sign-off" contenteditable="true">— com todo o meu amor</div>
+        </div>
+        <div class="seal-area">
+          <div class="seal-track" id="sealTrack">
+            <div class="seal-line"></div>
+            <div class="wax-seal" id="waxSeal">♥</div>
+            <div class="seal-target-label">arraste pra selar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TELA 4 -->
+  <section class="screen" data-screen="4">
+    <div class="screen-inner">
+      <h2 class="section-title">Nossa História</h2>
+      <p class="section-sub">arraste o coração pra reviver nossos momentos</p>
+
+      <div class="pull-wrap">
+        <div class="pull-track" id="pullTrack">
+          <div class="pull-fill" id="pullFill"></div>
+          <div class="pull-label">arraste →</div>
+          <div class="pull-handle" id="pullHandle">♥</div>
+        </div>
+      </div>
+
+      <div class="timeline" id="timeline">
+        <div class="tl-item tl-hidden">
+          <div class="tl-card">
+            <div class="tl-date" contenteditable="true">31 de janeiro de 2025</div>
+            <div class="tl-title" contenteditable="true">Primeira viagem</div>
+            <div class="tl-desc" contenteditable="true">Nossa viagem inesquecível, por muitas que virão!</div>
+          </div>
+          <div class="tl-dot"></div>
+          <div style="width:calc(50% - 44px);"></div>
+        </div>
+        <div class="tl-item tl-hidden right">
+          <div class="tl-card">
+            <div class="tl-date" contenteditable="true">31 de agosto de 2025</div>
+            <div class="tl-title" contenteditable="true">Uma data especial</div>
+            <div class="tl-desc" contenteditable="true">Um dia muito importante pra nós dois.</div>
+          </div>
+          <div class="tl-dot"></div>
+          <div style="width:calc(50% - 44px);"></div>
+        </div>
+      </div>
+      <button class="add-event" id="addEvent">+ adicionar outro momento</button>
+      <button class="reveal-btn" id="timelineContinueBtn">continuar ♥</button>
+    </div>
+  </section>
+
+  <!-- TELA 5 -->
+  <section class="screen" data-screen="5">
+    <div class="screen-inner">
+      <footer>
+        <div class="final-heart">♥</div>
+        <div class="footer-text" contenteditable="true">feito com amor, especialmente pra você.</div>
+        <div class="relive-hold" id="reliveHeart">
+          <svg viewBox="0 0 32 29.6">
+            <defs><clipPath id="reliveClip"><rect id="reliveFillRect" x="0" y="29.6" width="32" height="0"/></clipPath></defs>
+            <path fill="none" stroke="#9B6BFF" stroke-width="1.4" d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,14.2,16,21.6 c6.5-7.4,16-12.2,16-21.6C32,3.8,28.2,0,23.6,0z"/>
+            <path fill="#FF4FA3" clip-path="url(#reliveClip)" d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,14.2,16,21.6 c6.5-7.4,16-12.2,16-21.6C32,3.8,28.2,0,23.6,0z"/>
+          </svg>
+        </div>
+        <p class="hint-text">segure o coração pra reviver esse momento desde o início</p>
+      </footer>
+    </div>
+  </section>
+
+</div>
 
 <script>
   /* -------- starfield -------- */
@@ -432,12 +505,21 @@
     const s = document.createElement('div');
     s.className = 'star';
     const size = Math.random()*2 + 1;
-    s.style.width = size+'px';
-    s.style.height = size+'px';
-    s.style.top = Math.random()*100+'%';
-    s.style.left = Math.random()*100+'%';
+    s.style.width = size+'px'; s.style.height = size+'px';
+    s.style.top = Math.random()*100+'%'; s.style.left = Math.random()*100+'%';
     s.style.animationDelay = (Math.random()*3.5)+'s';
     starsEl.appendChild(s);
+  }
+
+  function spawnRipple(el){
+    const rect = el.getBoundingClientRect();
+    const r = document.createElement('div');
+    r.className = 'ripple';
+    r.style.left = (rect.left + rect.width/2) + 'px';
+    r.style.top = (rect.top + rect.height/2) + 'px';
+    r.style.width = '10px'; r.style.height = '10px';
+    document.body.appendChild(r);
+    setTimeout(()=> r.remove(), 720);
   }
 
   /* -------- counter -------- */
@@ -446,170 +528,169 @@
   const numDays = document.getElementById('numDays');
   const liveClock = document.getElementById('liveClock');
   const totalDays = document.getElementById('totalDays');
-
   function pad(n){ return String(n).padStart(2,'0'); }
-
   function updateCounter(){
     const start = new Date(startInput.value + 'T00:00:00');
     const now = new Date();
     let diffMs = now - start;
     if(diffMs < 0) diffMs = 0;
-
     let months = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
     let anchor = new Date(start);
     anchor.setMonth(anchor.getMonth() + months);
     if(anchor > now){ months--; anchor = new Date(start); anchor.setMonth(anchor.getMonth() + months); }
     const dayDiff = Math.floor((now - anchor) / 86400000);
-
     numMonths.textContent = Math.max(months,0);
     numDays.textContent = Math.max(dayDiff,0);
-
-    const totalDaysCount = Math.floor(diffMs / 86400000);
-    totalDays.textContent = totalDaysCount;
-
+    totalDays.textContent = Math.floor(diffMs / 86400000);
     const totalSeconds = Math.floor(diffMs / 1000);
-    const h = Math.floor(totalSeconds / 3600) % 24;
-    const m = Math.floor(totalSeconds / 60) % 60;
-    const s = totalSeconds % 60;
-    liveClock.textContent = pad(h)+':'+pad(m)+':'+pad(s);
+    liveClock.textContent = pad(Math.floor(totalSeconds/3600)%24)+':'+pad(Math.floor(totalSeconds/60)%60)+':'+pad(totalSeconds%60);
   }
-  updateCounter();
-  setInterval(updateCounter, 1000);
+  updateCounter(); setInterval(updateCounter, 1000);
   startInput.addEventListener('change', updateCounter);
 
-  /* -------- background music -------- */
+  /* -------- music -------- */
   const bgAudio = document.getElementById('bgAudio');
   const volumeSlider = document.getElementById('volumeSlider');
   const volIcon = document.getElementById('volIcon');
-  const autoplayHint = document.getElementById('autoplayHint');
-
-  const DEFAULT_VOLUME = 0.2; // volume padrão baixo
-  bgAudio.volume = DEFAULT_VOLUME;
-  volumeSlider.value = DEFAULT_VOLUME;
-
-  function updateVolIcon(){
-    const v = bgAudio.volume;
-    volIcon.textContent = bgAudio.muted || v === 0 ? '🔇' : (v < 0.5 ? '🔉' : '🔊');
-  }
+  const DEFAULT_VOLUME = 0.2;
+  bgAudio.volume = DEFAULT_VOLUME; volumeSlider.value = DEFAULT_VOLUME;
+  function updateVolIcon(){ const v = bgAudio.volume; volIcon.textContent = bgAudio.muted || v===0 ? '🔇' : (v<0.5?'🔉':'🔊'); }
   updateVolIcon();
+  volumeSlider.addEventListener('input', ()=>{ bgAudio.volume = parseFloat(volumeSlider.value); bgAudio.muted=false; updateVolIcon(); });
+  volIcon.addEventListener('click', ()=>{ bgAudio.muted = !bgAudio.muted; updateVolIcon(); });
 
-  volumeSlider.addEventListener('input', ()=>{
-    bgAudio.volume = parseFloat(volumeSlider.value);
-    bgAudio.muted = false;
-    updateVolIcon();
-  });
-
-  volIcon.addEventListener('click', ()=>{
-    bgAudio.muted = !bgAudio.muted;
-    updateVolIcon();
-  });
-
+  /* -------- open overlay: hold heart -------- */
   const openOverlay = document.getElementById('openOverlay');
   const holdHeart = document.getElementById('holdHeart');
   const fillRect = document.getElementById('fillRect');
   const holdLabel = document.getElementById('holdLabel');
-
-  const HOLD_MS = 1400; // tempo segurando até o coração encher
-  let holdStart = null;
-  let holdRAF = null;
-  let releasing = false;
-  let opened = false;
-
-  function setFill(percent){
-    const h = 29.6 * percent;
-    fillRect.setAttribute('y', 29.6 - h);
-    fillRect.setAttribute('height', h);
-  }
-
+  const HOLD_MS = 1400;
+  let holdStart=null, holdRAF=null, releasing=false, opened=false;
+  function setFill(el, percent){ const h = 29.6*percent; el.setAttribute('y', 29.6-h); el.setAttribute('height', h); }
   function holdLoop(ts){
-    if(holdStart === null) return;
-    const elapsed = ts - holdStart;
-    const percent = Math.min(elapsed / HOLD_MS, 1);
-    setFill(percent);
-    if(percent >= 1){
-      openSite();
-      return;
-    }
+    if(holdStart===null) return;
+    const percent = Math.min((ts-holdStart)/HOLD_MS, 1);
+    setFill(fillRect, percent);
+    if(percent>=1){ openSite(); return; }
     holdRAF = requestAnimationFrame(holdLoop);
   }
-
   function startHold(e){
-    if(opened) return;
-    e.preventDefault();
-    releasing = false;
-    holdStart = performance.now();
-    holdHeart.classList.add('pressing');
-    holdLabel.textContent = 'continua segurando...';
+    if(opened) return; e.preventDefault();
+    releasing=false; holdStart=performance.now();
+    holdHeart.classList.add('pressing'); holdLabel.textContent='continua segurando...';
     holdRAF = requestAnimationFrame(holdLoop);
   }
-
   function endHold(){
-    if(opened || holdStart === null) return;
-    holdStart = null;
-    releasing = true;
+    if(opened||holdStart===null) return;
+    holdStart=null; releasing=true;
     if(holdRAF) cancelAnimationFrame(holdRAF);
-    holdHeart.classList.remove('pressing');
-    holdLabel.textContent = 'segure o coração para abrir';
-
-    // esvazia o coração de volta suavemente
-    let current = parseFloat(fillRect.getAttribute('height')) / 29.6;
-    function drain(){
-      if(!releasing) return;
-      current -= 0.045;
-      if(current <= 0){ setFill(0); return; }
-      setFill(current);
-      requestAnimationFrame(drain);
-    }
+    holdHeart.classList.remove('pressing'); holdLabel.textContent='segure o coração para abrir';
+    let cur = parseFloat(fillRect.getAttribute('height'))/29.6;
+    function drain(){ if(!releasing) return; cur-=0.045; if(cur<=0){ setFill(fillRect,0); return;} setFill(fillRect,cur); requestAnimationFrame(drain); }
     drain();
   }
-
   holdHeart.addEventListener('mousedown', startHold);
-  holdHeart.addEventListener('touchstart', startHold, { passive:false });
-  ['mouseup','mouseleave','touchend','touchcancel'].forEach(evt=>{
-    holdHeart.addEventListener(evt, endHold);
-  });
-
+  holdHeart.addEventListener('touchstart', startHold, {passive:false});
+  ['mouseup','mouseleave','touchend','touchcancel'].forEach(evt=> holdHeart.addEventListener(evt, endHold));
   function openSite(){
-    opened = true;
-    if(holdRAF) cancelAnimationFrame(holdRAF);
-    bgAudio.muted = false;
-    bgAudio.volume = DEFAULT_VOLUME;
-    volumeSlider.value = DEFAULT_VOLUME;
-    bgAudio.play().catch(()=>{});
-    updateVolIcon();
+    opened=true; if(holdRAF) cancelAnimationFrame(holdRAF);
+    bgAudio.muted=false; bgAudio.volume=DEFAULT_VOLUME; volumeSlider.value=DEFAULT_VOLUME;
+    bgAudio.play().catch(()=>{}); updateVolIcon();
     openOverlay.classList.add('hide');
     setTimeout(()=>{ openOverlay.remove(); }, 650);
   }
-
-  // garante que a música nunca para sozinha (ex: se o navegador pausar por
-  // alguma interrupção, ela retoma o play automaticamente)
-  bgAudio.addEventListener('pause', ()=>{
-    if(!openOverlay.isConnected) return; // se ainda não abriu, ignora
-  });
   document.addEventListener('visibilitychange', ()=>{
-    if(document.visibilityState === 'visible' && !openOverlay.isConnected && bgAudio.paused){
-      bgAudio.play().catch(()=>{});
+    if(document.visibilityState==='visible' && !openOverlay.isConnected && bgAudio.paused) bgAudio.play().catch(()=>{});
+  });
+
+  /* -------- SCREEN NAVIGATION CORE -------- */
+  const screens = Array.from(document.querySelectorAll('.screen'));
+  const total = screens.length;
+  let screenIndex = 0;
+  let unlockedUpTo = 0;
+
+  const navDotsEl = document.getElementById('screenNav');
+  screens.forEach((s,i)=>{
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot' + (i===0?' active':'');
+    dot.addEventListener('click', ()=>{ if(i<=unlockedUpTo) goToScreen(i); });
+    navDotsEl.appendChild(dot);
+  });
+  const dots = Array.from(navDotsEl.querySelectorAll('.nav-dot'));
+  const prevScreenBtn = document.getElementById('prevScreenBtn');
+
+  function goToScreen(i){
+    if(i<0 || i>=total) return;
+    screenIndex = i;
+    screens.forEach((s,idx)=>{ s.classList.toggle('active', idx===screenIndex); if(idx===screenIndex) s.scrollTop=0; });
+    dots.forEach((d,idx)=>{ d.classList.toggle('active', idx===screenIndex); d.classList.toggle('locked', idx>unlockedUpTo); });
+    prevScreenBtn.classList.toggle('hidden', screenIndex===0);
+  }
+  function unlockNext(){ unlockedUpTo = Math.max(unlockedUpTo, screenIndex+1); dots.forEach((d,idx)=> d.classList.toggle('locked', idx>unlockedUpTo)); }
+  function advance(delay){ unlockNext(); setTimeout(()=> goToScreen(screenIndex+1), delay===undefined?550:delay); }
+
+  prevScreenBtn.addEventListener('click', ()=> goToScreen(screenIndex-1));
+  document.addEventListener('keydown', (e)=>{
+    if(!opened) return;
+    if((e.key==='ArrowRight'||e.key==='ArrowDown') && screenIndex+1<=unlockedUpTo) goToScreen(screenIndex+1);
+    if(e.key==='ArrowLeft'||e.key==='ArrowUp') goToScreen(screenIndex-1);
+  });
+
+  goToScreen(0);
+
+  /* -------- TELA 0: bater 3x no coração -------- */
+  const beatHeart = document.getElementById('beatHeart');
+  const beatDots = Array.from(document.querySelectorAll('.beat-dot'));
+  const beatHint = document.getElementById('beatHint');
+  let beatCount = 0;
+  beatHeart.addEventListener('click', ()=>{
+    if(beatCount>=3) return;
+    beatCount++;
+    beatHeart.classList.remove('beat-anim'); void beatHeart.offsetWidth; beatHeart.classList.add('beat-anim');
+    spawnRipple(beatHeart);
+    beatDots[beatCount-1].classList.add('filled');
+    if(beatCount>=3){
+      beatHint.textContent = 'nossos corações batem juntos ♥';
+      advance(700);
     }
   });
 
-  /* -------- photo carousel -------- */
+  /* -------- TELA 1: segurar o vinil -------- */
+  const vinylHold = document.getElementById('vinylHold');
+  const vinylDisc = document.getElementById('vinylDisc');
+  const vinylHint = document.getElementById('vinylHint');
+  const VINYL_MS = 1600;
+  let vStart=null, vRAF=null, vReleasing=false, vDone=false;
+  function vinylLoop(ts){
+    if(vStart===null) return;
+    const percent = Math.min((ts-vStart)/VINYL_MS, 1);
+    vinylHold.style.setProperty('--p', (percent*100).toFixed(1));
+    if(percent>=1){ vDone=true; vinylHint.textContent='a música tá no clima ♪'; vinylDisc.classList.remove('spinning'); advance(500); return; }
+    vRAF = requestAnimationFrame(vinylLoop);
+  }
+  function vinylStart(e){ if(vDone) return; e.preventDefault(); vReleasing=false; vStart=performance.now(); vinylDisc.classList.add('spinning'); vinylHint.textContent='segurando...'; vRAF=requestAnimationFrame(vinylLoop); }
+  function vinylEnd(){
+    if(vDone||vStart===null) return;
+    vStart=null; vReleasing=true; if(vRAF) cancelAnimationFrame(vRAF);
+    vinylDisc.classList.remove('spinning'); vinylHint.textContent='segure o disco até a música pegar embalo';
+    let cur = parseFloat(vinylHold.style.getPropertyValue('--p'))||0;
+    function drain(){ if(!vReleasing) return; cur-=4; if(cur<=0){ vinylHold.style.setProperty('--p',0); return;} vinylHold.style.setProperty('--p',cur); requestAnimationFrame(drain); }
+    drain();
+  }
+  vinylHold.addEventListener('mousedown', vinylStart);
+  vinylHold.addEventListener('touchstart', vinylStart, {passive:false});
+  ['mouseup','mouseleave','touchend','touchcancel'].forEach(evt=> vinylHold.addEventListener(evt, vinylEnd));
+
+  /* -------- TELA 2: galeria -------- */
   let photos = [
-    'https://i.postimg.cc/hv7NVBR1/image.png',
-    'https://i.postimg.cc/wxyBwR6b/image.png',
-    'https://i.postimg.cc/BQnmW3zS/image.png',
-    'https://i.postimg.cc/GpGQPm4T/image.png',
-    'https://i.postimg.cc/0QC03Xd7/image.png',
-    'https://i.postimg.cc/T2CcJSPM/image.png',
-    'https://i.postimg.cc/xTZyWzHL/image.png',
-    'https://i.postimg.cc/L5XLW98j/image.png',
-    'https://i.postimg.cc/PJRYsgLG/image.png',
-    'https://i.postimg.cc/VLJXBkTS/image.png',
-    'https://i.postimg.cc/dVddpSJw/image.png',
-    'https://i.postimg.cc/xT83xRkr/image.png',
-    'https://i.postimg.cc/RhDK5k36/image.png',
-    'https://i.postimg.cc/L8ffw0mn/image.png',
-    'https://i.postimg.cc/CKgDgHKk/image.png',
-    'https://i.postimg.cc/j5q7WxPd/image.png'
+    'https://i.postimg.cc/hv7NVBR1/image.png','https://i.postimg.cc/wxyBwR6b/image.png',
+    'https://i.postimg.cc/BQnmW3zS/image.png','https://i.postimg.cc/GpGQPm4T/image.png',
+    'https://i.postimg.cc/0QC03Xd7/image.png','https://i.postimg.cc/T2CcJSPM/image.png',
+    'https://i.postimg.cc/xTZyWzHL/image.png','https://i.postimg.cc/L5XLW98j/image.png',
+    'https://i.postimg.cc/PJRYsgLG/image.png','https://i.postimg.cc/VLJXBkTS/image.png',
+    'https://i.postimg.cc/dVddpSJw/image.png','https://i.postimg.cc/xT83xRkr/image.png',
+    'https://i.postimg.cc/RhDK5k36/image.png','https://i.postimg.cc/L8ffw0mn/image.png',
+    'https://i.postimg.cc/CKgDgHKk/image.png','https://i.postimg.cc/j5q7WxPd/image.png'
   ];
   let current = 0;
   const mainImg = document.getElementById('mainImg');
@@ -617,78 +698,145 @@
   const mainFileInput = document.getElementById('mainFileInput');
   const mainFrame = document.getElementById('mainFrame');
   const thumbsEl = document.getElementById('thumbs');
+  const galleryDotsEl = document.getElementById('galleryDots');
+  const galleryProgressText = document.getElementById('galleryProgressText');
+  const galleryContinueBtn = document.getElementById('galleryContinueBtn');
+  const visited = new Set();
+  const GALLERY_NEEDED = 3;
 
   function renderThumbs(){
     thumbsEl.innerHTML = '';
-    photos.forEach((url, i)=>{
+    photos.forEach((url,i)=>{
       const t = document.createElement('div');
-      t.className = 'thumb' + (i===current ? ' active' : '');
-      if(url){
-        const img = document.createElement('img');
-        img.src = url; img.style.display='block';
-        t.appendChild(img);
-      } else {
-        t.textContent = '+';
-      }
-      t.addEventListener('click', ()=>{
-        current = i;
-        if(photos[i]){ showCurrent(); }
-        else { mainFileInput.click(); }
-      });
+      t.className = 'thumb' + (i===current?' active':'');
+      if(url){ const img=document.createElement('img'); img.src=url; img.style.display='block'; t.appendChild(img); }
+      else { t.textContent='+'; }
+      t.addEventListener('click', ()=>{ current=i; if(photos[i]){ showCurrent(); } else { mainFileInput.click(); } });
       thumbsEl.appendChild(t);
     });
     const addT = document.createElement('div');
-    addT.className = 'thumb';
-    addT.textContent = '+';
-    addT.addEventListener('click', ()=>{
-      photos.push(null);
-      current = photos.length - 1;
-      mainFileInput.click();
-    });
+    addT.className='thumb'; addT.textContent='+';
+    addT.addEventListener('click', ()=>{ photos.push(null); current=photos.length-1; mainFileInput.click(); });
     thumbsEl.appendChild(addT);
   }
-
+  function updateGalleryProgress(){
+    galleryDotsEl.innerHTML='';
+    for(let i=0;i<GALLERY_NEEDED;i++){
+      const d = document.createElement('div');
+      d.className = 'gdot' + (i<visited.size?' on':'');
+      galleryDotsEl.appendChild(d);
+    }
+    if(visited.size>=GALLERY_NEEDED){
+      galleryProgressText.textContent = 'quantas lembranças boas ♥';
+      galleryContinueBtn.classList.add('show');
+    } else {
+      galleryProgressText.textContent = `veja mais ${GALLERY_NEEDED - visited.size} foto${GALLERY_NEEDED-visited.size>1?'s':''} pra continuar`;
+    }
+  }
   function showCurrent(){
     const url = photos[current];
-    if(url){
-      mainImg.src = url; mainImg.style.display = 'block';
-      mainPlaceholder.style.display = 'none';
-    } else {
-      mainImg.style.display = 'none';
-      mainPlaceholder.style.display = 'block';
-    }
-    renderThumbs();
+    if(url){ mainImg.src=url; mainImg.style.display='block'; mainPlaceholder.style.display='none'; }
+    else { mainImg.style.display='none'; mainPlaceholder.style.display='block'; }
+    visited.add(current);
+    renderThumbs(); updateGalleryProgress();
   }
-
-  mainFrame.addEventListener('click', (e)=>{
-    if(!photos[current]) mainFileInput.click();
-  });
-
-  mainFileInput.addEventListener('change', (e)=>{
-    const file = e.target.files[0];
-    if(!file) return;
-    photos[current] = URL.createObjectURL(file);
-    showCurrent();
-  });
-
-  document.getElementById('prevBtn').addEventListener('click', ()=>{
-    current = (current - 1 + photos.length) % photos.length;
-    showCurrent();
-  });
-  document.getElementById('nextBtn').addEventListener('click', ()=>{
-    current = (current + 1) % photos.length;
-    showCurrent();
-  });
-
+  mainFrame.addEventListener('click', ()=>{ if(!photos[current]) mainFileInput.click(); });
+  mainFileInput.addEventListener('change', (e)=>{ const f=e.target.files[0]; if(!f) return; photos[current]=URL.createObjectURL(f); showCurrent(); });
+  document.getElementById('prevPhotoBtn').addEventListener('click', (e)=>{ e.stopPropagation(); current=(current-1+photos.length)%photos.length; showCurrent(); });
+  document.getElementById('nextPhotoBtn').addEventListener('click', (e)=>{ e.stopPropagation(); current=(current+1)%photos.length; showCurrent(); });
+  galleryContinueBtn.addEventListener('click', ()=> advance(150));
   showCurrent();
 
-  /* -------- add timeline event -------- */
+  /* -------- TELA 3: arrastar selo -------- */
+  const waxSeal = document.getElementById('waxSeal');
+  const sealTrack = document.getElementById('sealTrack');
+  let sealDragging=false, sealStartY=0, sealCurY=0, sealed=false;
+  const SEAL_TRACK_H = 96, SEAL_H = 52;
+  const SEAL_MAX = SEAL_TRACK_H - SEAL_H;
+  function sealSetY(y){ waxSeal.style.transform = `translate(-50%, ${y}px)`; }
+  function sealPointerDown(e){
+    if(sealed) return;
+    sealDragging=true; waxSeal.classList.add('dragging');
+    sealStartY = (e.touches? e.touches[0].clientY : e.clientY) - sealCurY;
+    e.preventDefault();
+  }
+  function sealPointerMove(e){
+    if(!sealDragging||sealed) return;
+    const y = (e.touches? e.touches[0].clientY : e.clientY) - sealStartY;
+    sealCurY = Math.max(0, Math.min(SEAL_MAX, y));
+    sealSetY(sealCurY);
+  }
+  function sealPointerUp(){
+    if(!sealDragging||sealed) return;
+    sealDragging=false; waxSeal.classList.remove('dragging');
+    if(sealCurY >= SEAL_MAX*0.75){
+      sealed=true; sealCurY=SEAL_MAX; sealSetY(SEAL_MAX);
+      waxSeal.classList.add('sealed');
+      advance(650);
+    } else {
+      sealCurY=0; sealSetY(0);
+    }
+  }
+  waxSeal.addEventListener('mousedown', sealPointerDown);
+  waxSeal.addEventListener('touchstart', sealPointerDown, {passive:false});
+  window.addEventListener('mousemove', sealPointerMove);
+  window.addEventListener('touchmove', sealPointerMove, {passive:false});
+  window.addEventListener('mouseup', sealPointerUp);
+  window.addEventListener('touchend', sealPointerUp);
+
+  /* -------- TELA 4: pull tab + timeline reveal -------- */
+  const pullTrack = document.getElementById('pullTrack');
+  const pullHandle = document.getElementById('pullHandle');
+  const pullFill = document.getElementById('pullFill');
+  const timelineContinueBtn = document.getElementById('timelineContinueBtn');
+  let pDragging=false, pStartX=0, pCurX=0, pDone=false;
+  function getPullMax(){ return pullTrack.clientWidth - pullHandle.offsetWidth - 6; }
+  function pullSetX(x){ pullHandle.style.transform = `translateX(${x}px)`; pullFill.style.width = (x/getPullMax()*100)+'%'; }
+  function pullDown(e){
+    if(pDone) return;
+    pDragging=true; pullHandle.classList.add('dragging');
+    pStartX = (e.touches? e.touches[0].clientX : e.clientX) - pCurX;
+    e.preventDefault();
+  }
+  function pullMove(e){
+    if(!pDragging||pDone) return;
+    const x = (e.touches? e.touches[0].clientX : e.clientX) - pStartX;
+    pCurX = Math.max(0, Math.min(getPullMax(), x));
+    pullSetX(pCurX);
+  }
+  function revealTimeline(){
+    const items = Array.from(document.querySelectorAll('#timeline .tl-item.tl-hidden'));
+    items.forEach((it, idx)=>{
+      setTimeout(()=> it.classList.remove('tl-hidden'), idx*220);
+    });
+    setTimeout(()=> timelineContinueBtn.classList.add('show'), items.length*220 + 300);
+  }
+  function pullUp(){
+    if(!pDragging||pDone) return;
+    pDragging=false; pullHandle.classList.remove('dragging');
+    const max = getPullMax();
+    if(pCurX >= max*0.85){
+      pDone=true; pCurX=max; pullSetX(max);
+      document.querySelector('.pull-label').textContent = 'revivendo nossa história...';
+      revealTimeline();
+    } else {
+      pCurX=0; pullSetX(0);
+    }
+  }
+  pullHandle.addEventListener('mousedown', pullDown);
+  pullHandle.addEventListener('touchstart', pullDown, {passive:false});
+  window.addEventListener('mousemove', pullMove);
+  window.addEventListener('touchmove', pullMove, {passive:false});
+  window.addEventListener('mouseup', pullUp);
+  window.addEventListener('touchend', pullUp);
+  timelineContinueBtn.addEventListener('click', ()=> advance(150));
+
   document.getElementById('addEvent').addEventListener('click', ()=>{
     const timeline = document.getElementById('timeline');
     const items = timeline.querySelectorAll('.tl-item').length;
     const isRight = items % 2 === 1;
     const item = document.createElement('div');
-    item.className = 'tl-item' + (isRight ? ' right' : '');
+    item.className = 'tl-item' + (isRight?' right':'');
     item.innerHTML = `
       <div class="tl-card">
         <div class="tl-date" contenteditable="true">data</div>
@@ -700,6 +848,35 @@
     `;
     timeline.appendChild(item);
   });
+
+  /* -------- TELA 5: reviver (segurar coração pra reiniciar) -------- */
+  const reliveHeart = document.getElementById('reliveHeart');
+  const reliveFillRect = document.getElementById('reliveFillRect');
+  const RELIVE_MS = 1400;
+  let rStart=null, rRAF=null, rReleasing=false;
+  function reliveLoop(ts){
+    if(rStart===null) return;
+    const percent = Math.min((ts-rStart)/RELIVE_MS, 1);
+    setFill(reliveFillRect, percent);
+    if(percent>=1){ resetJourney(); return; }
+    rRAF = requestAnimationFrame(reliveLoop);
+  }
+  function reliveStart(e){ e.preventDefault(); rReleasing=false; rStart=performance.now(); reliveHeart.classList.add('pressing'); rRAF=requestAnimationFrame(reliveLoop); }
+  function reliveEnd(){
+    if(rStart===null) return; rStart=null; rReleasing=true;
+    if(rRAF) cancelAnimationFrame(rRAF);
+    reliveHeart.classList.remove('pressing');
+    let cur = parseFloat(reliveFillRect.getAttribute('height'))/29.6;
+    function drain(){ if(!rReleasing) return; cur-=0.045; if(cur<=0){ setFill(reliveFillRect,0); return;} setFill(reliveFillRect,cur); requestAnimationFrame(drain); }
+    drain();
+  }
+  reliveHeart.addEventListener('mousedown', reliveStart);
+  reliveHeart.addEventListener('touchstart', reliveStart, {passive:false});
+  ['mouseup','mouseleave','touchend','touchcancel'].forEach(evt=> reliveHeart.addEventListener(evt, reliveEnd));
+  function resetJourney(){
+    setFill(reliveFillRect, 0);
+    goToScreen(0);
+  }
 </script>
 
 </body>
