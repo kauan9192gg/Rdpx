@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nossa História</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -20,14 +20,14 @@
     --text-dim:rgba(241,233,255,0.62);
   }
   *{box-sizing:border-box;}
-  html,body{
-    height:100%;
+  html{scroll-behavior:smooth;}
+  body{
     margin:0;
-    overflow:hidden;
     background:var(--bg);
     color:var(--text);
     font-family:'Inter',sans-serif;
-    overscroll-behavior:none;
+    overflow-x:hidden;
+    position:relative;
   }
   h1,h2,h3,.serif{ font-family:'Playfair Display',serif; }
 
@@ -42,61 +42,35 @@
   [contenteditable="true"]:focus{ border-color:var(--pink); background:rgba(255,79,163,0.08); }
 
   /* starfield */
-  #stars{ position:fixed; inset:0; z-index:0; pointer-events:none; }
-  .star{ position:absolute; background:#fff; border-radius:50%; animation:twinkle 3.5s ease-in-out infinite; }
+  #stars{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+  }
+  .star{
+    position:absolute;
+    background:#fff;
+    border-radius:50%;
+    animation:twinkle 3.5s ease-in-out infinite;
+  }
   @keyframes twinkle{ 0%,100%{opacity:.15;} 50%{opacity:1;} }
 
-  /* ---------- SCREENS SYSTEM ---------- */
-  #screensTrack{
-    display:flex; flex-direction:column;
-    transition:transform .65s cubic-bezier(.65,0,.35,1);
-    position:relative; z-index:1;
-  }
-  .screen{
-    height:100svh; width:100%; flex-shrink:0;
-    overflow-y:auto; -webkit-overflow-scrolling:touch;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    text-align:center; padding:70px 20px 110px;
-    position:relative;
-  }
-  .screen-inner{ width:100%; max-width:1000px; margin:0 auto; }
-
-  /* nav dots */
-  #screenDots{
-    position:fixed; top:16px; left:50%; transform:translateX(-50%);
-    display:flex; gap:8px; z-index:60;
-  }
-  #screenDots .dot{
-    width:7px; height:7px; border-radius:50%;
-    background:rgba(241,233,255,0.3); cursor:pointer;
-    transition:background .3s, transform .3s;
-  }
-  #screenDots .dot.active{ background:var(--pink); transform:scale(1.4); }
-
-  /* next / prev controls */
-  .nav-btn{
-    position:fixed; left:50%; transform:translateX(-50%);
-    background:linear-gradient(90deg,var(--purple),var(--pink));
-    border:none; color:#fff; padding:12px 26px; border-radius:30px;
-    font-size:13px; letter-spacing:.5px; cursor:pointer; z-index:60;
-    display:flex; align-items:center; gap:6px;
-    box-shadow:0 8px 24px rgba(108,60,233,0.4);
-  }
-  #nextBtnNav{ bottom:26px; }
-  #nextBtnNav .arrow{ animation:bob 1.8s ease-in-out infinite; }
-  #prevBtnNav{
-    top:14px; right:16px; left:auto; transform:none;
-    background:rgba(11,6,24,0.55); border:1px solid var(--card-border);
-    padding:8px 14px; font-size:12px; box-shadow:none;
-  }
-  @keyframes bob{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(4px);} }
+  section, header{ position:relative; z-index:1; }
 
   /* ---------- HEADER / COUNTER ---------- */
+  header{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:60px 20px;
+    background:radial-gradient(circle at 50% 20%, rgba(108,60,233,0.35), transparent 55%), var(--bg);
+  }
   .top-label{
     font-size:12px; letter-spacing:3px; text-transform:uppercase;
     color:var(--purple-light); opacity:.85; margin-bottom:26px;
   }
-  .screen h1{
+  header h1{
     font-size:clamp(28px,5vw,44px);
     font-style:italic; font-weight:600;
     margin:0 0 8px;
@@ -124,21 +98,29 @@
     border-radius:30px; padding:10px 22px; font-size:20px; letter-spacing:2px;
     margin-bottom:22px; font-variant-numeric:tabular-nums;
   }
-  .days-of-love{ font-size:14px; color:var(--purple-light); letter-spacing:.5px; }
+  .days-of-love{
+    font-size:14px; color:var(--purple-light); letter-spacing:.5px;
+  }
+  .scroll-hint{
+    margin-top:56px; font-size:13px; color:var(--text-dim); letter-spacing:1px;
+    animation:bob 2.4s ease-in-out infinite;
+  }
+  @keyframes bob{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(8px);} }
 
+  section{ padding:110px 20px; max-width:1000px; margin:0 auto; }
   .section-title{
     text-align:center; margin-bottom:8px;
     font-size:clamp(28px,4.5vw,42px); font-style:italic;
   }
   .section-sub{
     text-align:center; color:var(--text-dim); font-size:13px;
-    margin-bottom:44px; letter-spacing:.5px;
+    margin-bottom:56px; letter-spacing:.5px;
   }
 
   /* ---------- MUSIC ---------- */
   .music-wrap{ display:flex; justify-content:center; }
   .music-card{
-    width:100%; max-width:420px; margin:0 auto;
+    width:100%; max-width:420px;
     background:var(--card); border:1px solid var(--card-border);
     border-radius:20px; padding:28px; text-align:center;
     backdrop-filter:blur(6px);
@@ -146,7 +128,9 @@
   .music-card .note-icon{ font-size:26px; color:var(--pink); margin-bottom:10px; }
   .music-card h3{ margin:0 0 4px; font-size:22px; }
   .music-card .sub{ font-size:12px; color:var(--text-dim); margin-bottom:20px; }
-  .now-playing-bars{ display:flex; align-items:flex-end; justify-content:center; gap:4px; height:26px; margin-top:6px; }
+  .now-playing-bars{
+    display:flex; align-items:flex-end; justify-content:center; gap:4px; height:26px; margin-top:6px;
+  }
   .now-playing-bars span{
     width:4px; border-radius:2px;
     background:linear-gradient(180deg,var(--pink),var(--purple-light));
@@ -160,13 +144,21 @@
 
   /* ---------- VOLUME CONTROL ---------- */
   .volume-control{
-    position:fixed; top:16px; left:16px; z-index:60;
+    position:fixed; top:16px; left:16px; z-index:50;
     display:flex; align-items:center; gap:8px;
     background:rgba(11,6,24,0.55); border:1px solid var(--card-border);
     padding:8px 14px; border-radius:30px; backdrop-filter:blur(8px);
   }
   .volume-control .icon{ font-size:15px; cursor:pointer; user-select:none; }
-  .volume-control input[type=range]{ width:80px; accent-color:var(--pink); cursor:pointer; }
+  .volume-control input[type=range]{
+    width:80px; accent-color:var(--pink); cursor:pointer;
+  }
+  .autoplay-hint{
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+    background:rgba(11,6,24,0.75); border:1px solid var(--card-border);
+    padding:10px 18px; border-radius:30px; font-size:12px; color:var(--text-dim);
+    z-index:50; cursor:pointer; display:none;
+  }
 
   /* ---------- OPEN OVERLAY ---------- */
   #openOverlay{
@@ -181,9 +173,11 @@
   #openOverlay.hide{ opacity:0; pointer-events:none; }
 
   .hold-heart{
-    width:110px; height:110px; cursor:pointer;
+    width:110px; height:110px;
+    cursor:pointer;
     -webkit-tap-highlight-color:transparent;
-    touch-action:none; user-select:none;
+    touch-action:none;
+    user-select:none;
     transition:transform .15s ease;
   }
   .hold-heart.pressing{ transform:scale(1.08); }
@@ -198,7 +192,6 @@
     background:var(--card); border:1px solid var(--card-border);
     border-radius:18px; overflow:hidden; position:relative;
     display:flex; align-items:center; justify-content:center;
-    margin:0 auto;
   }
   .main-frame img{ width:100%; height:100%; object-fit:cover; display:none; }
   .main-frame .placeholder{ text-align:center; color:var(--text-dim); font-size:13px; padding:20px; }
@@ -207,12 +200,13 @@
     position:absolute; top:50%; transform:translateY(-50%);
     background:rgba(11,6,24,0.55); border:1px solid var(--card-border); color:#fff;
     width:38px; height:38px; border-radius:50%; cursor:pointer; font-size:18px;
-    display:flex; align-items:center; justify-content:center; z-index:3;
+    display:flex; align-items:center; justify-content:center;
+    z-index:3;
   }
   .arrow-btn:active{ background:rgba(11,6,24,0.8); }
   #prevBtn{ left:10px; }
   #nextBtn{ right:10px; }
-  .thumbs{ display:flex; gap:10px; margin-top:20px; flex-wrap:wrap; justify-content:center; max-width:420px; }
+  .thumbs{ display:flex; gap:10px; margin-top:20px; flex-wrap:wrap; justify-content:center; }
   .thumb{
     width:56px; height:56px; border-radius:8px; overflow:hidden; cursor:pointer;
     border:2px solid transparent; background:var(--card); position:relative;
@@ -230,23 +224,24 @@
     border-radius:20px; box-shadow:0 25px 60px rgba(108,60,233,0.25);
   }
   .letter .quote-mark{ font-size:38px; color:var(--purple); opacity:.5; line-height:0; }
-  .letter-body{ font-size:18px; line-height:1.85; font-style:italic; font-family:'Playfair Display',serif; margin-top:8px; text-align:left; }
+  .letter-body{ font-size:18px; line-height:1.85; font-style:italic; font-family:'Playfair Display',serif; margin-top:8px; }
   .letter .sign-off{ margin-top:26px; text-align:right; font-size:15px; opacity:.7; font-family:'Inter',sans-serif; }
 
   /* ---------- TIMELINE ---------- */
-  .timeline{ position:relative; padding-top:10px; width:100%; }
+  .timeline{ position:relative; padding-top:10px; }
   .timeline::before{
     content:""; position:absolute; left:50%; top:0; bottom:0; width:2px;
     background:linear-gradient(var(--purple),var(--pink));
     transform:translateX(-50%);
   }
-  .tl-item{ display:flex; align-items:center; margin-bottom:44px; position:relative; }
+  .tl-item{
+    display:flex; align-items:center; margin-bottom:60px; position:relative;
+  }
   .tl-item.right{ flex-direction:row-reverse; }
   .tl-card{
     width:calc(50% - 44px);
     background:var(--card); border:1px solid var(--card-border);
     border-radius:16px; padding:20px 22px; backdrop-filter:blur(6px);
-    text-align:left;
   }
   .tl-date{ font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--pink); margin-bottom:6px; }
   .tl-title{ font-size:19px; font-family:'Playfair Display',serif; margin-bottom:6px; }
@@ -258,25 +253,27 @@
     flex-shrink:0; z-index:2;
   }
   .add-event{
-    display:block; margin:26px auto 0; background:transparent;
+    display:block; margin:0 auto; background:transparent;
     border:1px dashed var(--card-border); color:var(--text-dim);
     padding:10px 20px; border-radius:30px; cursor:pointer; font-size:13px;
   }
   .add-event:hover{ border-color:var(--pink); color:var(--pink); }
 
-  .final-note{ margin-top:36px; color:var(--text-dim); font-size:13px; }
+  footer{ text-align:center; padding:60px 20px 90px; color:var(--text-dim); font-size:12px; }
 
   @media(max-width:640px){
-    .screen{ padding:60px 16px 110px; }
+    header{ padding:50px 16px; min-height:100svh; }
     .top-label{ margin-bottom:18px; }
     .since-line{ margin-bottom:30px; font-size:13px; }
     .counter-boxes{ gap:12px; margin-bottom:20px; }
     .cbox{ padding:16px 18px; min-width:80px; }
     .cbox .num{ font-size:30px; }
     .live-clock{ font-size:16px; letter-spacing:1px; padding:8px 16px; }
+    .scroll-hint{ margin-top:40px; }
 
+    section{ padding:70px 16px; }
     .section-title{ font-size:26px; }
-    .section-sub{ margin-bottom:32px; }
+    .section-sub{ margin-bottom:40px; }
 
     .music-card{ padding:22px 18px; }
 
@@ -299,6 +296,7 @@
     .timeline::before{ left:16px; }
     .tl-dot{ margin-right:16px; }
   }
+
   @media(max-width:360px){
     .counter-boxes{ gap:8px; }
     .cbox{ padding:12px 14px; min-width:70px; }
@@ -308,7 +306,6 @@
 </style>
 </head>
 <body>
-
 <div id="openOverlay">
   <h2 contenteditable="true">um pouco de nós, pra você</h2>
   <div class="hold-heart" id="holdHeart">
@@ -332,114 +329,101 @@
   <span class="icon" id="volIcon">🔉</span>
   <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.2">
 </div>
+<div class="autoplay-hint" id="autoplayHint">toque aqui pra ligar a música ♪</div>
 
-<div id="screenDots"></div>
-<button class="nav-btn" id="prevBtnNav">‹ voltar</button>
-<button class="nav-btn" id="nextBtnNav"><span>continuar</span><span class="arrow">↓</span></button>
+<!-- HEADER / COUNTER -->
+<header>
+  <div class="top-label">com amor, pra você</div>
+  <h1 contenteditable="true">Feliz por estar com você</h1>
+  <div class="since-line">
+    juntos desde
+    <input type="date" id="startDate" value="2025-05-29">
+  </div>
+  <div class="counter-boxes">
+    <div class="cbox"><div class="num" id="numMonths">0</div><div class="label">meses</div></div>
+    <div class="cbox"><div class="num" id="numDays">0</div><div class="label">dias</div></div>
+  </div>
+  <div class="live-clock" id="liveClock">00:00:00</div>
+  <div class="days-of-love">✦ <span id="totalDays">0</span> dias de amor ✦</div>
+  <div class="scroll-hint">role para baixo ↓</div>
+</header>
 
-<div id="screensTrack">
-
-  <!-- SCREEN 0: HEADER / COUNTER -->
-  <section class="screen">
-    <div class="screen-inner">
-      <div class="top-label">com amor, pra você</div>
-      <h1 contenteditable="true">Feliz por estar com você</h1>
-      <div class="since-line">
-        juntos desde
-        <input type="date" id="startDate" value="2025-05-29">
-      </div>
-      <div class="counter-boxes">
-        <div class="cbox"><div class="num" id="numMonths">0</div><div class="label">meses</div></div>
-        <div class="cbox"><div class="num" id="numDays">0</div><div class="label">dias</div></div>
-      </div>
-      <div class="live-clock" id="liveClock">00:00:00</div>
-      <div class="days-of-love">✦ <span id="totalDays">0</span> dias de amor ✦</div>
-    </div>
-  </section>
-
-  <!-- SCREEN 1: MUSIC -->
-  <section class="screen">
-    <div class="screen-inner">
-      <h2 class="section-title">Nossa Música</h2>
-      <p class="section-sub">a trilha sonora do nosso amor</p>
-      <div class="music-wrap">
-        <div class="music-card">
-          <div class="note-icon">♫</div>
-          <h3 contenteditable="true">Toca essa aqui</h3>
-          <div class="sub">é a nossa música</div>
-          <div class="now-playing-bars"><span></span><span></span><span></span><span></span></div>
-        </div>
+<!-- MUSIC -->
+<section>
+  <h2 class="section-title">Nossa Música</h2>
+  <p class="section-sub">a trilha sonora do nosso amor</p>
+  <div class="music-wrap">
+    <div class="music-card">
+      <div class="note-icon">♫</div>
+      <h3 contenteditable="true">Toca essa aqui</h3>
+      <div class="sub">é a nossa música</div>
+      <div class="now-playing-bars">
+        <span></span><span></span><span></span><span></span>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- SCREEN 2: GALLERY -->
-  <section class="screen">
-    <div class="screen-inner">
-      <h2 class="section-title">Várias Fotinhas Nossas</h2>
-      <p class="section-sub">use as setas pra ver todas</p>
-      <div class="carousel">
-        <div class="main-frame" id="mainFrame">
-          <div class="placeholder" id="mainPlaceholder">
-            <span class="plus">+</span>
-            clique para adicionar uma foto
-          </div>
-          <img id="mainImg" src="" alt="">
-          <input type="file" accept="image/*" id="mainFileInput" style="display:none;">
-          <button class="arrow-btn" id="prevBtn">‹</button>
-          <button class="arrow-btn" id="nextBtn">›</button>
-        </div>
-        <div class="thumbs" id="thumbs"></div>
+<!-- GALLERY -->
+<section>
+  <h2 class="section-title">Várias Fotinhas Nossas</h2>
+  <p class="section-sub">clique na foto grande pra adicionar, e use as setas pra navegar</p>
+  <div class="carousel">
+    <div class="main-frame" id="mainFrame">
+      <div class="placeholder" id="mainPlaceholder">
+        <span class="plus">+</span>
+        clique para adicionar uma foto
       </div>
+      <img id="mainImg" src="" alt="">
+      <input type="file" accept="image/*" id="mainFileInput" style="display:none;">
+      <button class="arrow-btn" id="prevBtn">‹</button>
+      <button class="arrow-btn" id="nextBtn">›</button>
     </div>
-  </section>
+    <div class="thumbs" id="thumbs"></div>
+  </div>
+</section>
 
-  <!-- SCREEN 3: LETTER -->
-  <section class="screen">
-    <div class="screen-inner">
-      <h2 class="section-title">Uma Carta Pra Você</h2>
-      <p class="section-sub">clique no texto pra escrever a sua versão</p>
-      <div class="letter-wrap">
-        <div class="letter">
-          <div class="quote-mark">"</div>
-          <div class="letter-body" contenteditable="true">Desde o primeiro dia em que te vi, soube que minha vida jamais seria a mesma. Cada momento ao seu lado é uma bênção, cada sorriso seu ilumina meu mundo. Você é meu porto seguro, minha paz e minha maior aventura. Te amo mais do que as palavras podem expressar.</div>
-          <div class="sign-off" contenteditable="true">— com todo o meu amor</div>
-        </div>
+<!-- LETTER -->
+<section>
+  <h2 class="section-title">Uma Carta Pra Você</h2>
+  <p class="section-sub">clique no texto pra escrever a sua versão</p>
+  <div class="letter-wrap">
+    <div class="letter">
+      <div class="quote-mark">"</div>
+      <div class="letter-body" contenteditable="true">Desde o primeiro dia em que te vi, soube que minha vida jamais seria a mesma. Cada momento ao seu lado é uma bênção, cada sorriso seu ilumina meu mundo. Você é meu porto seguro, minha paz e minha maior aventura. Te amo mais do que as palavras podem expressar.</div>
+      <div class="sign-off" contenteditable="true">— com todo o meu amor</div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section>
+  <h2 class="section-title">Nossa História</h2>
+  <p class="section-sub">momentos que marcaram nossa jornada</p>
+  <div class="timeline" id="timeline">
+    <div class="tl-item">
+      <div class="tl-card">
+        <div class="tl-date" contenteditable="true">31 de janeiro de 2025</div>
+        <div class="tl-title" contenteditable="true">Primeira viagem</div>
+        <div class="tl-desc" contenteditable="true">Nossa viagem inesquecível, por muitas que virão!</div>
       </div>
+      <div class="tl-dot"></div>
+      <div style="width:calc(50% - 44px);"></div>
     </div>
-  </section>
-
-  <!-- SCREEN 4: TIMELINE -->
-  <section class="screen">
-    <div class="screen-inner">
-      <h2 class="section-title">Nossa História</h2>
-      <p class="section-sub">momentos que marcaram nossa jornada</p>
-      <div class="timeline" id="timeline">
-        <div class="tl-item">
-          <div class="tl-card">
-            <div class="tl-date" contenteditable="true">31 de janeiro de 2025</div>
-            <div class="tl-title" contenteditable="true">Primeira viagem</div>
-            <div class="tl-desc" contenteditable="true">Nossa viagem inesquecível, por muitas que virão!</div>
-          </div>
-          <div class="tl-dot"></div>
-          <div style="width:calc(50% - 44px);"></div>
-        </div>
-        <div class="tl-item right">
-          <div class="tl-card">
-            <div class="tl-date" contenteditable="true">31 de agosto de 2025</div>
-            <div class="tl-title" contenteditable="true">Uma data especial</div>
-            <div class="tl-desc" contenteditable="true">Um dia muito importante pra nós dois.</div>
-          </div>
-          <div class="tl-dot"></div>
-          <div style="width:calc(50% - 44px);"></div>
-        </div>
+    <div class="tl-item right">
+      <div class="tl-card">
+        <div class="tl-date" contenteditable="true">31 de agosto de 2025</div>
+        <div class="tl-title" contenteditable="true">Uma data especial</div>
+        <div class="tl-desc" contenteditable="true">Um dia muito importante pra nós dois.</div>
       </div>
-      <button class="add-event" id="addEvent">+ adicionar outro momento</button>
-      <div class="final-note" contenteditable="true">feito com amor, especialmente pra você. ♥</div>
+      <div class="tl-dot"></div>
+      <div style="width:calc(50% - 44px);"></div>
     </div>
-  </section>
+  </div>
+  <button class="add-event" id="addEvent">+ adicionar outro momento</button>
+</section>
 
-</div>
+<footer contenteditable="true">feito com amor, especialmente pra você.</footer>
 
 <script>
   /* -------- starfield -------- */
@@ -497,7 +481,9 @@
   const bgAudio = document.getElementById('bgAudio');
   const volumeSlider = document.getElementById('volumeSlider');
   const volIcon = document.getElementById('volIcon');
-  const DEFAULT_VOLUME = 0.2;
+  const autoplayHint = document.getElementById('autoplayHint');
+
+  const DEFAULT_VOLUME = 0.2; // volume padrão baixo
   bgAudio.volume = DEFAULT_VOLUME;
   volumeSlider.value = DEFAULT_VOLUME;
 
@@ -512,18 +498,18 @@
     bgAudio.muted = false;
     updateVolIcon();
   });
+
   volIcon.addEventListener('click', ()=>{
     bgAudio.muted = !bgAudio.muted;
     updateVolIcon();
   });
 
-  /* -------- hold-heart to open -------- */
   const openOverlay = document.getElementById('openOverlay');
   const holdHeart = document.getElementById('holdHeart');
   const fillRect = document.getElementById('fillRect');
   const holdLabel = document.getElementById('holdLabel');
 
-  const HOLD_MS = 1400;
+  const HOLD_MS = 1400; // tempo segurando até o coração encher
   let holdStart = null;
   let holdRAF = null;
   let releasing = false;
@@ -540,7 +526,10 @@
     const elapsed = ts - holdStart;
     const percent = Math.min(elapsed / HOLD_MS, 1);
     setFill(percent);
-    if(percent >= 1){ openSite(); return; }
+    if(percent >= 1){
+      openSite();
+      return;
+    }
     holdRAF = requestAnimationFrame(holdLoop);
   }
 
@@ -561,6 +550,8 @@
     if(holdRAF) cancelAnimationFrame(holdRAF);
     holdHeart.classList.remove('pressing');
     holdLabel.textContent = 'segure o coração para abrir';
+
+    // esvazia o coração de volta suavemente
     let current = parseFloat(fillRect.getAttribute('height')) / 29.6;
     function drain(){
       if(!releasing) return;
@@ -590,53 +581,16 @@
     setTimeout(()=>{ openOverlay.remove(); }, 650);
   }
 
+  // garante que a música nunca para sozinha (ex: se o navegador pausar por
+  // alguma interrupção, ela retoma o play automaticamente)
+  bgAudio.addEventListener('pause', ()=>{
+    if(!openOverlay.isConnected) return; // se ainda não abriu, ignora
+  });
   document.addEventListener('visibilitychange', ()=>{
     if(document.visibilityState === 'visible' && !openOverlay.isConnected && bgAudio.paused){
       bgAudio.play().catch(()=>{});
     }
   });
-
-  /* -------- screen navigation -------- */
-  const track = document.getElementById('screensTrack');
-  const screens = document.querySelectorAll('.screen');
-  const dotsEl = document.getElementById('screenDots');
-  const nextBtnNav = document.getElementById('nextBtnNav');
-  const prevBtnNav = document.getElementById('prevBtnNav');
-  let currentScreen = 0;
-
-  screens.forEach((s, i)=>{
-    const d = document.createElement('div');
-    d.className = 'dot' + (i===0 ? ' active' : '');
-    d.addEventListener('click', ()=> goToScreen(i));
-    dotsEl.appendChild(d);
-  });
-
-  function goToScreen(i){
-    if(i < 0 || i >= screens.length) return;
-    currentScreen = i;
-    track.style.transform = `translateY(-${i*100}svh)`;
-    dotsEl.querySelectorAll('.dot').forEach((d, idx)=>{
-      d.classList.toggle('active', idx === i);
-    });
-    prevBtnNav.style.display = i === 0 ? 'none' : 'flex';
-    if(i === screens.length - 1){
-      nextBtnNav.style.display = 'none';
-    } else {
-      nextBtnNav.style.display = 'flex';
-    }
-  }
-
-  nextBtnNav.addEventListener('click', ()=> goToScreen(currentScreen + 1));
-  prevBtnNav.addEventListener('click', ()=> goToScreen(currentScreen - 1));
-
-  document.addEventListener('keydown', (e)=>{
-    if(!openOverlay.isConnected){
-      if(e.key === 'ArrowDown' || e.key === 'PageDown') goToScreen(currentScreen + 1);
-      if(e.key === 'ArrowUp' || e.key === 'PageUp') goToScreen(currentScreen - 1);
-    }
-  });
-
-  goToScreen(0);
 
   /* -------- photo carousel -------- */
   let photos = [
@@ -717,13 +671,11 @@
     showCurrent();
   });
 
-  document.getElementById('prevBtn').addEventListener('click', (e)=>{
-    e.stopPropagation();
+  document.getElementById('prevBtn').addEventListener('click', ()=>{
     current = (current - 1 + photos.length) % photos.length;
     showCurrent();
   });
-  document.getElementById('nextBtn').addEventListener('click', (e)=>{
-    e.stopPropagation();
+  document.getElementById('nextBtn').addEventListener('click', ()=>{
     current = (current + 1) % photos.length;
     showCurrent();
   });
