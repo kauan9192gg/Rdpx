@@ -165,17 +165,25 @@
     position:fixed; inset:0; z-index:200;
     background:radial-gradient(circle at 50% 40%, rgba(108,60,233,0.45), transparent 60%), var(--bg);
     display:flex; flex-direction:column; align-items:center; justify-content:center;
-    text-align:center; cursor:pointer; padding:20px;
+    text-align:center; padding:20px;
     transition:opacity .6s ease;
   }
-  #openOverlay .heart{
-    font-size:44px; margin-bottom:18px; color:var(--pink);
-    animation:pulse 1.6s ease-in-out infinite;
-  }
-  @keyframes pulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.15); } }
-  #openOverlay h2{ font-size:clamp(24px,5vw,34px); font-style:italic; margin:0 0 10px; }
-  #openOverlay p{ font-size:13px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; }
+  #openOverlay h2{ font-size:clamp(24px,5vw,34px); font-style:italic; margin:0 0 26px; }
+  #openOverlay p{ font-size:13px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; margin-top:22px; }
   #openOverlay.hide{ opacity:0; pointer-events:none; }
+
+  .hold-heart{
+    width:110px; height:110px;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:none;
+    user-select:none;
+    transition:transform .15s ease;
+  }
+  .hold-heart.pressing{ transform:scale(1.08); }
+  .hold-heart svg{ width:100%; height:100%; overflow:visible; filter:drop-shadow(0 0 14px rgba(255,79,163,0.45)); }
+  #heartOutline{ fill:none; stroke:var(--purple-light); stroke-width:1.4; }
+  #heartFill{ fill:var(--pink); }
 
   /* ---------- GALLERY / CAROUSEL ---------- */
   .carousel{ display:flex; flex-direction:column; align-items:center; }
@@ -263,9 +271,19 @@
 </head>
 <body>
 <div id="openOverlay">
-  <div class="heart">♥</div>
-  <h2 contenteditable="true" onclick="event.stopPropagation()">um pouco de nós, pra você</h2>
-  <p>toque para abrir</p>
+  <h2 contenteditable="true">um pouco de nós, pra você</h2>
+  <div class="hold-heart" id="holdHeart">
+    <svg viewBox="0 0 32 29.6">
+      <defs>
+        <clipPath id="fillClip">
+          <rect id="fillRect" x="0" y="29.6" width="32" height="0"/>
+        </clipPath>
+      </defs>
+      <path id="heartOutline" d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,14.2,16,21.6 c6.5-7.4,16-12.2,16-21.6C32,3.8,28.2,0,23.6,0z"/>
+      <path id="heartFill" d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,14.2,16,21.6 c6.5-7.4,16-12.2,16-21.6C32,3.8,28.2,0,23.6,0z" clip-path="url(#fillClip)"/>
+    </svg>
+  </div>
+  <p id="holdLabel">segure o coração para abrir</p>
 </div>
 
 <div id="stars"></div>
@@ -453,8 +471,73 @@
   });
 
   const openOverlay = document.getElementById('openOverlay');
+  const holdHeart = document.getElementById('holdHeart');
+  const fillRect = document.getElementById('fillRect');
+  const holdLabel = document.getElementById('holdLabel');
+
+  const HOLD_MS = 1400; // tempo segurando até o coração encher
+  let holdStart = null;
+  let holdRAF = null;
+  let releasing = false;
+  let opened = false;
+
+  function setFill(percent){
+    const h = 29.6 * percent;
+    fillRect.setAttribute('y', 29.6 - h);
+    fillRect.setAttribute('height', h);
+  }
+
+  function holdLoop(ts){
+    if(holdStart === null) return;
+    const elapsed = ts - holdStart;
+    const percent = Math.min(elapsed / HOLD_MS, 1);
+    setFill(percent);
+    if(percent >= 1){
+      openSite();
+      return;
+    }
+    holdRAF = requestAnimationFrame(holdLoop);
+  }
+
+  function startHold(e){
+    if(opened) return;
+    e.preventDefault();
+    releasing = false;
+    holdStart = performance.now();
+    holdHeart.classList.add('pressing');
+    holdLabel.textContent = 'continua segurando...';
+    holdRAF = requestAnimationFrame(holdLoop);
+  }
+
+  function endHold(){
+    if(opened || holdStart === null) return;
+    holdStart = null;
+    releasing = true;
+    if(holdRAF) cancelAnimationFrame(holdRAF);
+    holdHeart.classList.remove('pressing');
+    holdLabel.textContent = 'segure o coração para abrir';
+
+    // esvazia o coração de volta suavemente
+    let current = parseFloat(fillRect.getAttribute('height')) / 29.6;
+    function drain(){
+      if(!releasing) return;
+      current -= 0.045;
+      if(current <= 0){ setFill(0); return; }
+      setFill(current);
+      requestAnimationFrame(drain);
+    }
+    drain();
+  }
+
+  holdHeart.addEventListener('mousedown', startHold);
+  holdHeart.addEventListener('touchstart', startHold, { passive:false });
+  ['mouseup','mouseleave','touchend','touchcancel'].forEach(evt=>{
+    holdHeart.addEventListener(evt, endHold);
+  });
 
   function openSite(){
+    opened = true;
+    if(holdRAF) cancelAnimationFrame(holdRAF);
     bgAudio.muted = false;
     bgAudio.volume = DEFAULT_VOLUME;
     volumeSlider.value = DEFAULT_VOLUME;
@@ -463,7 +546,6 @@
     openOverlay.classList.add('hide');
     setTimeout(()=>{ openOverlay.remove(); }, 650);
   }
-  openOverlay.addEventListener('click', openSite);
 
   // garante que a música nunca para sozinha (ex: se o navegador pausar por
   // alguma interrupção, ela retoma o play automaticamente)
